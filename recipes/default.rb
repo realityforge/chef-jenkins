@@ -42,22 +42,6 @@ ruby_block "store jenkins ssh pubkey" do
   end
 end
 
-directory "#{node[:jenkins][:server][:home]}/plugins" do
-  owner node[:jenkins][:server][:user]
-  group node[:jenkins][:server][:group]
-  only_if { node[:jenkins][:server][:plugins].size > 0 }
-end
-
-node[:jenkins][:server][:plugins].each do |name|
-  remote_file "#{node[:jenkins][:server][:home]}/plugins/#{name}.jpi" do
-    source "#{node[:jenkins][:mirror]}/plugins/#{name}/latest/#{name}.jpi"
-    backup false
-    owner node[:jenkins][:server][:user]
-    group node[:jenkins][:server][:group]
-    action :create_if_missing
-  end
-end
-
 case node.platform
 when "ubuntu", "debian"
   include_recipe "apt"
@@ -148,23 +132,4 @@ template "/etc/default/jenkins"
 package "jenkins" do
   action :nothing
   notifies :create, "template[/etc/default/jenkins]", :immediately
-end
-
-# restart if this run only added new plugins
-log "plugins updated, restarting jenkins" do
-  #ugh :restart does not work, need to sleep after stop.
-  notifies :stop, "service[jenkins]", :immediately
-  notifies :create, "ruby_block[netstat]", :immediately
-  notifies :start, "service[jenkins]", :immediately
-  notifies :create, "ruby_block[block_until_operational]", :immediately
-  only_if do
-    if File.exists?(pid_file)
-      htime = File.mtime(pid_file)
-      Dir["#{node[:jenkins][:server][:home]}/plugins/*.jpi"].select { |file|
-        File.mtime(file) > htime
-      }.size > 0
-    end
-  end
-
-  action :nothing
 end

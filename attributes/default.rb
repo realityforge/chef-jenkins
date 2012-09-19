@@ -30,10 +30,6 @@ default[:jenkins][:server][:port] = 8080
 default[:jenkins][:server][:host] = node[:fqdn]
 default[:jenkins][:server][:url]  = "http://#{node[:jenkins][:server][:host]}:#{node[:jenkins][:server][:port]}"
 
-#download the latest version of plugins, bypassing update center
-#example: ["git", "URLSCM", ...]
-default[:jenkins][:server][:plugins] = []
-
 #working around: http://tickets.opscode.com/browse/CHEF-1848
 #set to true if you have the CHEF-1848 patch applied
 default[:jenkins][:server][:use_head] = false
