@@ -177,7 +177,9 @@ Issues
 License & Author
 ================
 
-This is a downstream fork of Doug MacEachern's Hudson cookbook (https://github.com/dougm/site-cookbooks) and therefore deserves all the glory.
+There are many contributors to this cookbook. It was a fork of AJ Christensen's Jenkins cookbook that was ultimately
+a fork a downstream fork of Doug MacEachern's Hudson cookbook (https://github.com/dougm/site-cookbooks). These are the
+people that deserve all the glory.
 
 Author:: Doug MacEachern (<dougm@vmware.com>)
 
