@@ -28,10 +28,7 @@ attribute :cwd, :kind_of => String
 attribute :timeout, :kind_of => Integer
 attribute :block, :kind_of => Proc
 
-def initialize(name, run_context=nil)
-  super
-  @action = :run
-end
+default_action :run
 
 def block(&block)
   if block_given? and block

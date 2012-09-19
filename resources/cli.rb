@@ -29,10 +29,7 @@ attribute :command, :kind_of => String, :name_attribute => true
 attribute :timeout, :kind_of => Integer
 attribute :block, :kind_of => Proc
 
-def initialize(name, run_context=nil)
-  super
-  @action = :run
-end
+default_action :update
 
 def block(&block)
   if block_given? and block

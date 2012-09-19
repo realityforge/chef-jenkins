@@ -27,8 +27,8 @@ attribute :url, :kind_of => String
 attribute :job_name, :kind_of => String, :name_attribute => true
 attribute :config, :kind_of => String
 
+default_action :update
 def initialize(name, run_context=nil)
   super
-  @action = :update
   @url = node[:jenkins][:server][:url]
 end
