@@ -1,5 +1,6 @@
 Description
 ===========
+
 Installs and configures Jenkins CI server & node slaves.  Resource providers to support automation via jenkins-cli, including job create/update.
 
 Requirements
@@ -8,7 +9,7 @@ Requirements
 Chef
 ----
 
-* Chef version 0.9.10 or higher
+* Chef version 0.10.10 or higher
 
 Platform
 --------
@@ -68,13 +69,10 @@ Attributes
 * jenkins[:node][:ssh_pass] - SSH slave password (not required when server is installed via default recipe)
 * jenkins[:node][:ssh_private_key] - jenkins master defaults to: `~/.ssh/id_rsa` (created by the default recipe)
 * jenkins[:node][:jvm_options] - SSH slave JVM options
-* jenkins[:iptables_allow] - if iptables is enabled, add a rule passing 'jenkins[:server][:port]'
-* jenkins[:nginx][:http_proxy][:variant] - use `nginx` or `apache2` to proxy traffic to jenkins backend (`nil` by default)
 * jenkins[:http_proxy][:www_redirect] - add a redirect rule for 'www.*' URL requests ("disable" by default)
 * jenkins[:http_proxy][:listen_ports] - list of HTTP ports for the HTTP proxy to listen on ([80] by default)
 * jenkins[:http_proxy][:host_name] - primary vhost name for the HTTP proxy to respond to (`node[:fqdn]` by default)
 * jenkins[:http_proxy][:host_aliases] - optional list of other host aliases to respond to (empty by default)
-* jenkins[:http_proxy][:client_max_body_size] - max client upload size ("1024m" by default, nginx only)
 
 Usage
 =====
@@ -106,11 +104,6 @@ Creates the home directory for the node slave and sets 'JENKINS_HOME' and 'JENKI
 [1] http://weblogs.java.net/blog/2008/09/29/winsw-windows-service-wrapper-less-restrictive-license
 [2] http://wiki.jenkins-ci.org/display/JENKINS/Distributed+builds
 [3] http://wiki.jenkins-ci.org/display/JENKINS/Installing+Jenkins+as+a+Windows+service
-
-'proxy_nginx' recipe
---------------------
-
-Uses the nginx::source recipe from the nginx cookbook to install an HTTP frontend proxy. To automatically activate this recipe set the `node[:jenkins][:http_proxy][:variant]` to `nginx`.
 
 'proxy_apache2' recipe
 ----------------------
