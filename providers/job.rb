@@ -22,25 +22,11 @@ def job_url
   job_url
 end
 
-def new_job_url
-  "#{server_url}/createItem?name=#{@new_resource.job_name}"
-end
-
 def job_exists
   url = URI.parse(job_url)
   res = Chef::REST::RESTRequest.new(:GET, url, nil).call
   Chef::Log.debug("[jenkins_job] GET #{url.request_uri} == #{res.code}")
   res.kind_of?(Net::HTTPSuccess)
-end
-
-def post_job(url)
-  #shame we can't use http_request resource
-  url = URI.parse(url)
-  Chef::Log.debug("[jenkins_job] POST #{url.request_uri} using #{@new_resource.config}")
-  body = IO.read(@new_resource.config)
-  headers = {"Content-Type" => "text/xml"}
-  res = Chef::REST::RESTRequest.new(:POST, url, body, headers).call
-  res.error! unless res.kind_of?(Net::HTTPSuccess)
 end
 
 notifying_action :create do
@@ -51,9 +37,9 @@ end
 
 notifying_action :update do
   if job_exists
-    post_job(job_url)
+    jenkins_cli "update-job #{new_resource.job_name} < #{new_resource.config}"
   else
-    post_job(new_job_url)
+    jenkins_cli "create-job #{new_resource.job_name} < #{new_resource.config}"
   end
 end
 
