@@ -120,20 +120,6 @@ This resource can be used to execute the Jenkins cli from your recipes.  For exa
       jenkins_cli "safe-restart"
     end
 
-'jenkins_node' resource provider
---------------------------------
-
-This resource can be used to configure nodes as the 'node_ssh' and 'node_windows' recipes do or "Launch slave via execution of command on the Master".
-
-    jenkins_node node[:fqdn] do
-      description  "My node for things, stuff and whatnot"
-      executors    5
-      remote_fs    "/var/jenkins"
-      launcher     "command"
-      command      "ssh -i my_key #{node[:fqdn]} java -jar #{remote_fs}/slave.jar"
-      env          "ANT_HOME" => "/usr/local/ant", "M2_REPO" => "/dev/null"
-    end
-
 'jenkins_job' resource provider
 -------------------------------
 
