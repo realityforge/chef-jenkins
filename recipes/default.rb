@@ -12,33 +12,32 @@
 # limitations under the License.
 #
 
-pkey = "#{node[:jenkins][:server][:home]}/.ssh/id_rsa"
-
-user node[:jenkins][:server][:user] do
-  home node[:jenkins][:server][:home]
+user node['jenkins']['server']['user'] do
+  home node['jenkins']['server']['home']
 end
 
-directory node[:jenkins][:server][:home] do
+directory node['jenkins']['server']['home'] do
   recursive true
-  owner node[:jenkins][:server][:user]
-  group node[:jenkins][:server][:group]
+  owner node['jenkins']['server']['user']
+  group node['jenkins']['server']['group']
 end
 
-directory "#{node[:jenkins][:server][:home]}/.ssh" do
+directory "#{node['jenkins']['server']['home']}/.ssh" do
   mode 0700
-  owner node[:jenkins][:server][:user]
-  group node[:jenkins][:server][:group]
+  owner node['jenkins']['server']['user']
+  group node['jenkins']['server']['group']
 end
 
+pkey = "#{node['jenkins']['server']['home']}/.ssh/id_rsa"
 execute "ssh-keygen -f #{pkey} -N ''" do
-  user  node[:jenkins][:server][:user]
-  group node[:jenkins][:server][:group]
+  user  node['jenkins']['server']['user']
+  group node['jenkins']['server']['group']
   not_if { File.exists?(pkey) }
 end
 
 ruby_block "store jenkins ssh pubkey" do
   block do
-    node.set[:jenkins][:server][:pubkey] = File.open("#{pkey}.pub") { |f| f.gets }
+    node.set['jenkins']['server']['pubkey'] = File.open("#{pkey}.pub") { |f| f.gets }
   end
 end
 
@@ -81,11 +80,11 @@ ruby_block "netstat" do
   block do
     10.times do
       if IO.popen("netstat -lnt").entries.select { |entry|
-          entry.split[3] =~ /:#{node[:jenkins][:server][:port]}$/
+          entry.split[3] =~ /:#{node['jenkins']['server']['port']}$/
         }.size == 0
         break
       end
-      Chef::Log.debug("service[jenkins] still listening (port #{node[:jenkins][:server][:port]})")
+      Chef::Log.debug("service[jenkins] still listening (port #{node['jenkins']['server']['port']})")
       sleep 1
     end
   end
@@ -101,7 +100,7 @@ end
 ruby_block "block_until_operational" do
   block do
     until IO.popen("netstat -lnt").entries.select { |entry|
-        entry.split[3] =~ /:#{node[:jenkins][:server][:port]}$/
+        entry.split[3] =~ /:#{node['jenkins']['server']['port']}$/
       }.size == 1
       Chef::Log.debug "service[jenkins] not listening on port #{node.jenkins.server.port}"
       sleep 1
