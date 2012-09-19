@@ -21,14 +21,18 @@
 # limitations under the License.
 #
 
+def server_url
+  new_resource.url || node[:jenkins][:server][:url]
+end
+
 def job_url
-  job_url = "#{@new_resource.url}/job/#{@new_resource.job_name}/config.xml"
+  job_url = "#{server_url}/job/#{@new_resource.job_name}/config.xml"
   Chef::Log.debug "[jenkins_job] job_url: #{job_url}"
   job_url
 end
 
 def new_job_url
-  "#{@new_resource.url}/createItem?name=#{@new_resource.job_name}"
+  "#{server_url}/createItem?name=#{@new_resource.job_name}"
 end
 
 def job_exists
