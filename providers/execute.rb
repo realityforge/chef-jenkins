@@ -16,7 +16,7 @@
 
 include Chef::Mixin::Command
 
-def action_run
+notifying_action :run do
   args = {
     :command => @new_resource.command,
     :command_string => @new_resource.to_s,

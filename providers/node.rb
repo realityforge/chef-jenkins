@@ -12,11 +12,7 @@
 # limitations under the License.
 #
 
-def action_update
-  action_create
-end
-
-def action_create
+def do_create
   gscript = "#{new_resource.remote_fs}/manage_#{new_resource.name}.groovy"
 
   file gscript do
@@ -52,22 +48,30 @@ def action_create
   end
 end
 
-def action_delete
+notifying_action :create do
+ do_create
+end
+
+notifying_action :update do
+ do_create
+end
+
+notifying_action :delete do
   jenkins_cli "delete-node #{new_resource.name}"
 end
 
-def action_connect
+notifying_action :connect do
   jenkins_cli "connect-node #{new_resource.name}"
 end
 
-def action_disconnect
+notifying_action :disconnect do
   jenkins_cli "disconnect-node #{new_resource.name}"
 end
 
-def action_online
+notifying_action :online do
   jenkins_cli "online-node #{new_resource.name}"
 end
 
-def action_offline
+notifying_action :offline do
   jenkins_cli "offline-node #{new_resource.name}"
 end

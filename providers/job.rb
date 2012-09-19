@@ -43,14 +43,13 @@ def post_job(url)
   res.error! unless res.kind_of?(Net::HTTPSuccess)
 end
 
-def action_create
+notifying_action :create do
   unless job_exists
     jenkins_cli "create-job #{@new_resource.job_name} < #{@new_resource.config}"
   end
 end
 
-#there is no cli update-job command
-def action_update
+notifying_action :update do
   if job_exists
     post_job(job_url)
   else
@@ -58,18 +57,18 @@ def action_update
   end
 end
 
-def action_delete
+notifying_action :delete do
   jenkins_cli "delete-job #{@new_resource.job_name}"
 end
 
-def action_disable
+notifying_action :disable do
   jenkins_cli "disable-job #{@new_resource.job_name}"
 end
 
-def action_enable
+notifying_action :enable do
   jenkins_cli "enable-job #{@new_resource.job_name}"
 end
 
-def action_build
+notifying_action :build do
   jenkins_cli "build #{@new_resource.job_name}"
 end

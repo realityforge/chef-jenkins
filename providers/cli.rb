@@ -12,7 +12,7 @@
 # limitations under the License.
 #
 
-def action_run
+notifying_action :run do
   url = @new_resource.url || node[:jenkins][:server][:url]
   home = @new_resource.home || node[:jenkins][:node][:home]
 
