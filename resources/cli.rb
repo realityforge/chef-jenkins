@@ -20,7 +20,7 @@ attribute :command, :kind_of => String, :name_attribute => true
 attribute :timeout, :kind_of => Integer
 attribute :block, :kind_of => Proc
 
-default_action :update
+default_action :run
 
 def block(&block)
   if block_given? and block
