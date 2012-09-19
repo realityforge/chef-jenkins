@@ -12,26 +12,18 @@
 # limitations under the License.
 #
 
+include Chef::JenkinsCLI
+
 notifying_action :run do
-  url = new_resource.url || node[:jenkins][:server][:url]
-  home = new_resource.home || node[:jenkins][:server][:home]
-
-  #recipes will chown to jenkins later if this doesn't already exist
-  directory "home for jenkins-cli.jar" do
-    action :create
-    path node[:jenkins][:server][:home]
-  end
-
-  cli_jar = ::File.join(home, "jenkins-cli.jar")
+  cli_jar = "#{Chef::Config[:file_cache_path]}/jenkins-cli.jar"
   remote_file cli_jar do
-    source "#{url}/jnlpJars/jenkins-cli.jar"
-    not_if { ::File.exists?(cli_jar) }
+    source "#{jenkins_server_url}/jnlpJars/jenkins-cli.jar"
+    action :create_if_missing
   end
 
-  command = "#{node["java"]["java_home"]}/bin/java -jar #{cli_jar} -s #{url} #{new_resource.command}"
-
-  jenkins_execute command do
-    cwd home
-    block { |stdout| new_resource.block.call(stdout) } if new_resource.block
+  bash "jenkins_cli #{new_resource.command}" do
+    user node['jenkins']['server']['user']
+    group node['jenkins']['server']['group']
+    code jenkins_command(new_resource.command)
   end
 end

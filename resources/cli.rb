@@ -14,18 +14,9 @@
 
 actions :run
 
-attribute :url, :kind_of => String
-attribute :home, :kind_of => String
 attribute :command, :kind_of => String, :name_attribute => true
-attribute :timeout, :kind_of => Integer
-attribute :block, :kind_of => Proc
+
+attribute :url, :kind_of => String
+attribute :private_key, :kind_of => String, :default => nil
 
 default_action :run
-
-def block(&block)
-  if block_given? and block
-    @block = block
-  else
-    @block
-  end
-end
