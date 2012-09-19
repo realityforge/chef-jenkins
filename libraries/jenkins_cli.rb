@@ -17,7 +17,7 @@
 class Chef
   module JenkinsCLI
     def jenkins_server_url
-      new_resource.url || node['jenkins']['server']['url']
+      new_resource.url || "http://#{node['jenkins']['server']['host']}:#{node['jenkins']['server']['port']}"
     end
 
     def jenkins_command(command)
