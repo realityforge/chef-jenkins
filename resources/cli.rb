@@ -25,14 +25,13 @@ actions :run
 
 attribute :url, :kind_of => String
 attribute :home, :kind_of => String
-attribute :command, :kind_of => String
+attribute :command, :kind_of => String, :name_attribute => true
 attribute :timeout, :kind_of => Integer
 attribute :block, :kind_of => Proc
 
 def initialize(name, run_context=nil)
   super
   @action = :run
-  @command = name
 end
 
 def block(&block)

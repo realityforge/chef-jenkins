@@ -24,12 +24,11 @@
 actions :create, :update, :delete, :build, :disable, :enable
 
 attribute :url, :kind_of => String
-attribute :job_name, :kind_of => String
+attribute :job_name, :kind_of => String, :name_attribute => true
 attribute :config, :kind_of => String
 
 def initialize(name, run_context=nil)
   super
   @action = :update
-  @job_name = name
   @url = node[:jenkins][:server][:url]
 end
