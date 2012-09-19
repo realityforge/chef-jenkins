@@ -14,12 +14,12 @@
 
 notifying_action :run do
   url = new_resource.url || node[:jenkins][:server][:url]
-  home = new_resource.home || node[:jenkins][:node][:home]
+  home = new_resource.home || node[:jenkins][:server][:home]
 
   #recipes will chown to jenkins later if this doesn't already exist
   directory "home for jenkins-cli.jar" do
     action :create
-    path node[:jenkins][:node][:home]
+    path node[:jenkins][:server][:home]
   end
 
   cli_jar = ::File.join(home, "jenkins-cli.jar")

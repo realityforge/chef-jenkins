@@ -13,7 +13,6 @@
 #
 
 pkey = "#{node[:jenkins][:server][:home]}/.ssh/id_rsa"
-tmp = "/tmp"
 
 user node[:jenkins][:server][:user] do
   home node[:jenkins][:server][:home]
