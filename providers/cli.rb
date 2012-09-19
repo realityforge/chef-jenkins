@@ -28,14 +28,7 @@ notifying_action :run do
     not_if { ::File.exists?(cli_jar) }
   end
 
-  java_home = node[:jenkins][:java_home] || (node.has_key?(:java) ? node[:java][:jdk_dir] : nil)
-  if java_home == nil
-    java = "java"
-  else
-    java = ::File.join(java_home, "bin", "java")
-  end
-
-  command = "#{java} -jar #{cli_jar} -s #{url} #{new_resource.command}"
+  command = "#{node["java"]["java_home"]}/bin/java -jar #{cli_jar} -s #{url} #{new_resource.command}"
 
   jenkins_execute command do
     cwd home

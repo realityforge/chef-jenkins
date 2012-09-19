@@ -38,7 +38,6 @@ Attributes
 ==========
 
 * jenkins[:mirror] - Base URL for downloading Jenkins (server)
-* jenkins[:java_home] - Java install path, used for for cli commands
 * jenkins[:server][:home] - JENKINS_HOME directory
 * jenkins[:server][:user] - User the Jenkins server runs as
 * jenkins[:server][:group] - Jenkins user primary group
