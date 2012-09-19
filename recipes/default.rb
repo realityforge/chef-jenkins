@@ -50,8 +50,8 @@ directory "#{node[:jenkins][:server][:home]}/plugins" do
 end
 
 node[:jenkins][:server][:plugins].each do |name|
-  remote_file "#{node[:jenkins][:server][:home]}/plugins/#{name}.hpi" do
-    source "#{node[:jenkins][:mirror]}/plugins/#{name}/latest/#{name}.hpi"
+  remote_file "#{node[:jenkins][:server][:home]}/plugins/#{name}.jpi" do
+    source "#{node[:jenkins][:mirror]}/plugins/#{name}/latest/#{name}.jpi"
     backup false
     owner node[:jenkins][:server][:user]
     group node[:jenkins][:server][:group]
@@ -161,7 +161,7 @@ log "plugins updated, restarting jenkins" do
   only_if do
     if File.exists?(pid_file)
       htime = File.mtime(pid_file)
-      Dir["#{node[:jenkins][:server][:home]}/plugins/*.hpi"].select { |file|
+      Dir["#{node[:jenkins][:server][:home]}/plugins/*.jpi"].select { |file|
         File.mtime(file) > htime
       }.size > 0
     end
