@@ -12,14 +12,10 @@
 # limitations under the License.
 #
 
-def server_url
-  new_resource.url || node[:jenkins][:server][:url]
-end
+include Chef::JenkinsCLI
 
 def job_url
-  job_url = "#{server_url}/job/#{new_resource.job_name}/config.xml"
-  Chef::Log.debug "[jenkins_job] job_url: #{job_url}"
-  job_url
+  "#{jenkins_server_url}/job/#{new_resource.job_name}/config.xml"
 end
 
 def job_exists
