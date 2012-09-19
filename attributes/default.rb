@@ -39,8 +39,6 @@ default[:jenkins][:server][:port] = 8080
 default[:jenkins][:server][:host] = node[:fqdn]
 default[:jenkins][:server][:url]  = "http://#{node[:jenkins][:server][:host]}:#{node[:jenkins][:server][:port]}"
 
-default[:jenkins][:iptables_allow] = "disable"
-
 #download the latest version of plugins, bypassing update center
 #example: ["git", "URLSCM", ...]
 default[:jenkins][:server][:plugins] = []
