@@ -13,8 +13,8 @@
 #
 
 notifying_action :run do
-  url = @new_resource.url || node[:jenkins][:server][:url]
-  home = @new_resource.home || node[:jenkins][:node][:home]
+  url = new_resource.url || node[:jenkins][:server][:url]
+  home = new_resource.home || node[:jenkins][:node][:home]
 
   #recipes will chown to jenkins later if this doesn't already exist
   directory "home for jenkins-cli.jar" do
@@ -35,7 +35,7 @@ notifying_action :run do
     java = ::File.join(java_home, "bin", "java")
   end
 
-  command = "#{java} -jar #{cli_jar} -s #{url} #{@new_resource.command}"
+  command = "#{java} -jar #{cli_jar} -s #{url} #{new_resource.command}"
 
   jenkins_execute command do
     cwd home

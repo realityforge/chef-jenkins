@@ -17,7 +17,7 @@ def server_url
 end
 
 def job_url
-  job_url = "#{server_url}/job/#{@new_resource.job_name}/config.xml"
+  job_url = "#{server_url}/job/#{new_resource.job_name}/config.xml"
   Chef::Log.debug "[jenkins_job] job_url: #{job_url}"
   job_url
 end
@@ -31,7 +31,7 @@ end
 
 notifying_action :create do
   unless job_exists
-    jenkins_cli "create-job #{@new_resource.job_name} < #{@new_resource.config}"
+    jenkins_cli "create-job #{new_resource.job_name} < #{new_resource.config}"
   end
 end
 
@@ -44,17 +44,17 @@ notifying_action :update do
 end
 
 notifying_action :delete do
-  jenkins_cli "delete-job #{@new_resource.job_name}"
+  jenkins_cli "delete-job #{new_resource.job_name}"
 end
 
 notifying_action :disable do
-  jenkins_cli "disable-job #{@new_resource.job_name}"
+  jenkins_cli "disable-job #{new_resource.job_name}"
 end
 
 notifying_action :enable do
-  jenkins_cli "enable-job #{@new_resource.job_name}"
+  jenkins_cli "enable-job #{new_resource.job_name}"
 end
 
 notifying_action :build do
-  jenkins_cli "build #{@new_resource.job_name}"
+  jenkins_cli "build #{new_resource.job_name}"
 end
