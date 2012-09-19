@@ -13,20 +13,19 @@
 #
 include_attribute "java::default"
 
-default[:jenkins][:mirror] = "http://mirrors.jenkins-ci.org"
-default[:jenkins][:package_url] = "http://pkg.jenkins-ci.org"
+default['jenkins']['mirror'] = "http://mirrors.jenkins-ci.org"
+default['jenkins']['package_url'] = "http://pkg.jenkins-ci.org"
 
-default[:jenkins][:server][:home] = "/var/lib/jenkins"
-default[:jenkins][:server][:user] = "jenkins"
+default['jenkins']['server']['home'] = "/var/lib/jenkins"
+default['jenkins']['server']['user'] = "jenkins"
 
 case node[:platform]
 when "debian", "ubuntu"
-  default[:jenkins][:server][:group] = "nogroup"
+  default['jenkins']['server']['group'] = 'nogroup'
 else
-  default[:jenkins][:server][:group] = node[:jenkins][:server][:user]
+  default['jenkins']['server']['group'] = 'jenkins'
 end
 
-default[:jenkins][:server][:port] = 8080
-default[:jenkins][:server][:host] = node[:fqdn]
-default[:jenkins][:server][:url]  = "http://#{node[:jenkins][:server][:host]}:#{node[:jenkins][:server][:port]}"
-
+default['jenkins']['server']['port'] = 8080
+default['jenkins']['server']['host'] = node[:fqdn]
+default['jenkins']['server']['url']  = "http://#{node['jenkins']['server']['host']}:#{node['jenkins']['server']['port']}"
