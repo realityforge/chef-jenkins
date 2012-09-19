@@ -168,9 +168,3 @@ log "plugins updated, restarting jenkins" do
 
   action :nothing
 end
-
-# Front Jenkins with an HTTP server
-case node[:jenkins][:http_proxy][:variant]
-when "apache2"
-  include_recipe "jenkins::proxy_apache2"
-end

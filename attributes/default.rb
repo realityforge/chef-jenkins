@@ -38,11 +38,3 @@ default[:jenkins][:server][:plugins] = []
 #set to true if you have the CHEF-1848 patch applied
 default[:jenkins][:server][:use_head] = false
 
-default[:jenkins][:http_proxy][:variant]              = nil
-default[:jenkins][:http_proxy][:www_redirect]         = "disable"
-default[:jenkins][:http_proxy][:listen_ports]         = [ 80 ]
-default[:jenkins][:http_proxy][:host_name]            = nil
-default[:jenkins][:http_proxy][:host_aliases]         = []
-default[:jenkins][:http_proxy][:client_max_body_size] = "1024m"
-default[:jenkins][:http_proxy][:basic_auth_username] = "jenkins"
-default[:jenkins][:http_proxy][:basic_auth_password] = "jenkins"

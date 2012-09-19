@@ -57,11 +57,6 @@ Usage
 
 Installs a Jenkins CI server using the http://jenkins-ci.org/redhat RPM.  The recipe also generates an ssh private key and stores the ssh public key in the node 'jenkins[:pubkey]' attribute for use by the node recipes.
 
-'proxy_apache2' recipe
-----------------------
-
-Uses the apache2 recipe from the apache2 cookbook to install an HTTP frontend proxy. To automatically activate this recipe set the `node[:jenkins][:http_proxy][:variant]` to `apache2`.
-
 'jenkins_cli' resource provider
 -------------------------------
 
