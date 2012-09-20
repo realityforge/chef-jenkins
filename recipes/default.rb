@@ -97,3 +97,8 @@ end
 
 jenkins_ensure_enabled "initial_startup"
 
+bash "update jenkins plugin cache" do
+  user node['jenkins']['server']['user']
+  group node['jenkins']['server']['group']
+  code "curl  -L #{node['jenkins']['update_center_url']} | sed '1d;$d' | curl -X POST -H 'Accept: application/json' -d @- #{::Chef::Jenkins.jenkins_server_url(node)}/updateCenter/byId/default/postBack"
+end

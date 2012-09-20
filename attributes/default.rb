@@ -14,6 +14,7 @@
 include_attribute "java::default"
 
 default['jenkins']['mirror'] = "http://mirrors.jenkins-ci.org"
+default['jenkins']['update_center_url'] = "http://updates.jenkins-ci.org/update-center.json"
 default['jenkins']['package_url'] = "http://pkg.jenkins-ci.org"
 
 default['jenkins']['server']['home'] = "/var/lib/jenkins"
