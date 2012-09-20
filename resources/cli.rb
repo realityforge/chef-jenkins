@@ -16,7 +16,7 @@ actions :run
 
 attribute :command, :kind_of => String, :name_attribute => true
 
-attribute :url, :kind_of => String
+attribute :server_url, :kind_of => String
 attribute :private_key, :kind_of => String, :default => nil
 
 default_action :run

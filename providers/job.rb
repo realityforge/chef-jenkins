@@ -14,14 +14,8 @@
 
 include Chef::JenkinsCLI
 
-def job_url
-  "#{jenkins_server_url}/job/#{new_resource.job_name}/config.xml"
-end
-
 def job_exists
-  url = URI.parse(job_url)
-  res = Chef::REST::RESTRequest.new(:GET, url, nil).call
-  Chef::Log.debug("[jenkins_job] GET #{url.request_uri} == #{res.code}")
+  res = jenkins_request("job/#{new_resource.job_name}/config.xml")
   res.kind_of?(Net::HTTPSuccess)
 end
 

@@ -14,8 +14,10 @@
 
 actions :create, :update, :delete, :build, :disable, :enable
 
-attribute :url, :kind_of => String, :default => nil
 attribute :job_name, :kind_of => String, :name_attribute => true
 attribute :config, :kind_of => String
+
+attribute :server_url, :kind_of => String
+attribute :private_key, :kind_of => String, :default => nil
 
 default_action :update

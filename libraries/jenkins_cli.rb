@@ -24,7 +24,16 @@ class Chef
   end
   module JenkinsCLI
     def jenkins_server_url
-      new_resource.url || "http://#{node['jenkins']['server']['host']}:#{node['jenkins']['server']['port']}"
+      new_resource.server_url || ::Chef::Jenkins.jenkins_server_url(node)
+    end
+
+    def jenkins_request(url)
+      Net::HTTP.get_response(URI("#{jenkins_server_url}/#{url}"))
+    end
+
+    def jenkins_json_request(url)
+      res = jenkins_request(url)
+      res.is_a?(Net::HTTPSuccess) ? JSON.parse(res.body.to_s) : nil
     end
 
     def jenkins_command(command)
