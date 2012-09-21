@@ -12,93 +12,132 @@
 # limitations under the License.
 #
 
-user node['jenkins']['server']['user'] do
-  home node['jenkins']['server']['home']
+include_recipe "java"
+
+group node['jenkins']['group'] do
 end
 
-directory node['jenkins']['server']['home'] do
-  recursive true
-  owner node['jenkins']['server']['user']
-  group node['jenkins']['server']['group']
+user node['jenkins']['user'] do
+  comment 'Jenkins Continuous Integration Server'
+  gid node['jenkins']['group']
+  home node['jenkins']['base_dir']
+  shell '/bin/bash'
 end
 
-directory "#{node['jenkins']['server']['home']}/.ssh" do
+directory node['jenkins']['base_dir'] do
   mode 0700
-  owner node['jenkins']['server']['user']
-  group node['jenkins']['server']['group']
+  owner node['jenkins']['user']
+  group node['jenkins']['group']
+  recursive true
 end
 
-pkey = "#{node['jenkins']['server']['home']}/.ssh/id_rsa"
+directory "#{node['jenkins']['base_dir']}/.ssh" do
+  mode 0700
+  owner node['jenkins']['user']
+  group node['jenkins']['group']
+end
+
+pkey = "#{node['jenkins']['base_dir']}/.ssh/id_rsa"
 execute "ssh-keygen -f #{pkey} -N ''" do
-  user  node['jenkins']['server']['user']
-  group node['jenkins']['server']['group']
+  user node['jenkins']['user']
+  group node['jenkins']['group']
   not_if { File.exists?(pkey) }
 end
 
 ruby_block "store jenkins ssh pubkey" do
   block do
-    node.set['jenkins']['server']['pubkey'] = File.open("#{pkey}.pub") { |f| f.gets }
+    node.override['jenkins']['server']['pubkey'] = File.open("#{pkey}.pub") { |f| f.gets }
   end
 end
 
-case node.platform
-when "ubuntu", "debian"
-  include_recipe "apt"
-  include_recipe "java"
+directory node['jenkins']['server_dir'] do
+  mode "0700"
+  owner node['jenkins']['user']
+  group node['jenkins']['group']
+  recursive true
+end
 
-  pid_file = "/var/run/jenkins/jenkins.pid"
-  install_starts_service = true
+directory node['jenkins']['work_dir'] do
+  mode "0700"
+  owner node['jenkins']['user']
+  group node['jenkins']['group']
+  recursive true
+end
 
-  apt_repository "jenkins" do
-    uri "#{node.jenkins.package_url}/debian"
-    components %w[binary/]
-    key "http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key"
-    action :add
+version = node['jenkins']['version']
+if version
+  version_suffix = version
+else
+  # TODO: FiX Me!
+  version = 'latest'
+  version_suffix = 'latest'
+end
+
+package_url = "#{node['jenkins']['mirror']}/war/#{version}/jenkins.war"
+war_file = "#{node['jenkins']['base_dir']}/jenkins-#{version_suffix}.war"
+
+remote_file war_file do
+  source package_url
+  mode "0600"
+  owner node['jenkins']['user']
+  group node['jenkins']['group']
+  action :create_if_missing
+end
+
+unless node['jenkins']['version']
+  ruby_block "block_until_operational" do
+    block do
+      sleep 1
+      node.override['jenkins']['version'] = `java -jar /opt/jenkins/jenkins-latest.war --version | tail -1`.strip
+    end
+    action :create
   end
-when "centos", "redhat"
-  include_recipe "yum"
+end
 
-  pid_file = "/var/run/jenkins.pid"
-  install_starts_service = false
 
-  yum_key "jenkins" do
-    url "#{node.jenkins.package_url}/redhat/jenkins-ci.org.key"
-    action :add
-  end
+service "jenkins" do
+  provider Chef::Provider::Service::Upstart
+  supports :start => true, :restart => true, :stop => true
+  action :nothing
+end
 
-  yum_repository "jenkins" do
-    description "repository for jenkins"
-    url "#{node.jenkins.package_url}/redhat/"
-    key "jenkins"
-    action :add
-  end
+requires_authbind = node['jenkins']['server']['port'] < 1024
+if requires_authbind
+  include_recipe 'authbind'
+end
+
+java_args = []
+java_args << "-Xmx256m"
+# Required for authbind
+java_args << "-Djava.net.preferIPv4Stack=true" # make jenkins listen on IPv4 address
+
+args = []
+args << "--ajp13Port=-1"
+args << "--httpsPort=-1"
+args << "--httpPort=#{node['jenkins']['server']['port']}"
+args << "--httpListenAddress=#{node['jenkins']['server']['host']}"
+args << "--webroot=#{node['jenkins']['work_dir']}"
+
+template "/etc/init/jenkins.conf" do
+  source "upstart.conf.erb"
+  mode "0644"
+  cookbook 'jenkins'
+  variables(:war_file => war_file, :java_args => java_args, :args => args, :authbind => requires_authbind, :listen_ports => [node['jenkins']['server']['port']])
+  notifies :restart, resources(:service => "jenkins"), :delayed
 end
 
 service "jenkins" do
-  supports [ :stop, :start, :restart, :status ]
-  status_command "test -f #{pid_file} && kill -0 `cat #{pid_file}`"
-  action :nothing
-end
-
-log "jenkins: install and start" do
-  notifies :install, "package[jenkins]", :immediately
-  notifies :start, "service[jenkins]", :immediately unless install_starts_service
-  not_if do
-    File.exists? "/usr/share/jenkins/jenkins.war"
-  end
-end
-
-template "/etc/default/jenkins"
-
-package "jenkins" do
-  action :nothing
-  notifies :create, "template[/etc/default/jenkins]", :immediately
+  provider Chef::Provider::Service::Upstart
+  supports :start => true, :restart => true, :stop => true
+  action [:enable, :start]
 end
 
 jenkins_ensure_enabled "initial_startup"
 
-bash "update jenkins plugin cache" do
-  user node['jenkins']['server']['user']
-  group node['jenkins']['server']['group']
-  code "curl  -L #{node['jenkins']['update_center_url']} | sed '1d;$d' | curl -X POST -H 'Accept: application/json' -d @- #{::Chef::Jenkins.jenkins_server_url(node)}/updateCenter/byId/default/postBack"
+if node['jenkins']['update_center_url']
+  bash "update jenkins plugin cache" do
+    user node['jenkins']['user']
+    group node['jenkins']['group']
+    code "curl  -L #{node['jenkins']['update_center_url']} | sed '1d;$d' | curl -X POST -H 'Accept: application/json' -d @- #{::Chef::Jenkins.jenkins_server_url(node)}/updateCenter/byId/default/postBack"
+  end
 end

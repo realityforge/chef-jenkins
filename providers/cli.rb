@@ -22,8 +22,8 @@ notifying_action :run do
   end
 
   bash "jenkins_cli #{new_resource.command}" do
-    user node['jenkins']['server']['user']
-    group node['jenkins']['server']['group']
+    user node['jenkins']['user']
+    group node['jenkins']['group']
     code jenkins_command(new_resource.command)
   end
 end

@@ -13,19 +13,15 @@
 #
 include_attribute "java::default"
 
-default['jenkins']['mirror'] = "http://mirrors.jenkins-ci.org"
-default['jenkins']['update_center_url'] = "http://updates.jenkins-ci.org/update-center.json"
-default['jenkins']['package_url'] = "http://pkg.jenkins-ci.org"
+default['jenkins']['version'] = nil
+default['jenkins']['mirror'] = 'http://mirrors.jenkins-ci.org'
+default['jenkins']['update_center_url'] = 'http://updates.jenkins-ci.org/update-center.json'
 
-default['jenkins']['server']['home'] = "/var/lib/jenkins"
-default['jenkins']['server']['user'] = "jenkins"
-
-case node[:platform]
-when "debian", "ubuntu"
-  default['jenkins']['server']['group'] = 'nogroup'
-else
-  default['jenkins']['server']['group'] = 'jenkins'
-end
+default['jenkins']['base_dir'] = '/opt/jenkins'
+default['jenkins']['server_dir'] = '/opt/jenkins/server'
+default['jenkins']['work_dir'] = '/opt/jenkins/work'
+default['jenkins']['user'] = 'jenkins'
+default['jenkins']['group'] = 'jenkins'
 
 default['jenkins']['server']['port'] = 8080
 default['jenkins']['server']['host'] = node['fqdn']

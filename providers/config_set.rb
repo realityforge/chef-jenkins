@@ -18,12 +18,12 @@ notifying_action :create do
   end
 
   new_resource.configs.each_pair do |config_file, config|
-    template "#{node['jenkins']['server']['home']}/#{config_file}.xml" do
+    template "#{node['jenkins']['server_dir']}/#{config_file}.xml" do
       source config['source'] || "#{config_file}.xml.erb"
       cookbook config['cookbook']
       mode "0600"
-      owner node['jenkins']['server']['user']
-      group node['jenkins']['server']['group']
+      owner node['jenkins']['user']
+      group node['jenkins']['group']
       variables config
       notifies :run, resources(:jenkins_reload => "config_reload"), :delayed
     end
