@@ -65,16 +65,17 @@ directory node['jenkins']['work_dir'] do
 end
 
 version = node['jenkins']['version']
-if version
-  version_suffix = version
-else
-  # TODO: FiX Me!
-  version = 'latest'
-  version_suffix = 'latest'
+unless node['jenkins']['version']
+  begin
+    node.override['jenkins']['version'] =
+      `curl  -I "#{node['jenkins']['mirror']}/war/latest/jenkins.war"`.scan(/Location:.*\/war\/(.*)\/jenkins.war/).flatten[0]
+  rescue Exception
+    raise "Unable to determine version of jenkins to use."
+  end
 end
 
-package_url = "#{node['jenkins']['mirror']}/war/#{version}/jenkins.war"
-war_file = "#{node['jenkins']['base_dir']}/jenkins-#{version_suffix}.war"
+package_url = "#{node['jenkins']['mirror']}/war/#{node['jenkins']['version']}/jenkins.war"
+war_file = "#{node['jenkins']['base_dir']}/jenkins-#{node['jenkins']['version']}.war"
 
 remote_file war_file do
   source package_url
@@ -83,17 +84,6 @@ remote_file war_file do
   group node['jenkins']['group']
   action :create_if_missing
 end
-
-unless node['jenkins']['version']
-  ruby_block "block_until_operational" do
-    block do
-      sleep 1
-      node.override['jenkins']['version'] = `java -jar /opt/jenkins/jenkins-latest.war --version | tail -1`.strip
-    end
-    action :create
-  end
-end
-
 
 service "jenkins" do
   provider Chef::Provider::Service::Upstart
