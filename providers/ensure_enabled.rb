@@ -19,10 +19,14 @@ notifying_action :run do
     block do
       sleep 1
       loop do
-        url = URI.parse("#{::Chef::Jenkins.jenkins_server_url(node)}/job/test/config.xml")
-        res = Chef::REST::RESTRequest.new(:GET, url, nil).call
-        break if res.kind_of?(Net::HTTPSuccess) or res.kind_of?(Net::HTTPNotFound)
-        Chef::Log.debug "service[jenkins] not responding OK to GET / #{res.inspect}"
+        begin
+          url = URI.parse("#{::Chef::Jenkins.jenkins_server_url(node)}/job/test/config.xml")
+          res = Chef::REST::RESTRequest.new(:GET, url, nil).call
+          break if res.kind_of?(Net::HTTPSuccess) or res.kind_of?(Net::HTTPNotFound)
+          Chef::Log.debug "service[jenkins] not responding OK to GET / #{res.inspect}"
+        rescue Exception => e
+          Chef::Log.debug "service[jenkins] error while accessing GET /"
+        end
         sleep 1
       end
     end
