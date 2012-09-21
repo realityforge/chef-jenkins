@@ -15,8 +15,6 @@
 include Chef::JenkinsCLI
 
 notifying_action :run do
-  jenkins_cli "reload-configuration"
-
   ruby_block "block_until_operational" do
     block do
       sleep 1
