@@ -64,7 +64,6 @@ directory node['jenkins']['work_dir'] do
   recursive true
 end
 
-version = node['jenkins']['version']
 unless node['jenkins']['version']
   begin
     node.override['jenkins']['version'] =
