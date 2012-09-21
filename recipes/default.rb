@@ -94,6 +94,11 @@ end
 requires_authbind = node['jenkins']['server']['port'] < 1024
 if requires_authbind
   include_recipe 'authbind'
+
+  authbind_port "AuthBind Jenkins Port #{node['jenkins']['server']['port']}" do
+    port node['jenkins']['server']['port']
+    user node['jenkins']['user']
+  end
 end
 
 java_args = []
