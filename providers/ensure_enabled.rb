@@ -18,13 +18,6 @@ notifying_action :run do
   ruby_block "block_until_operational" do
     block do
       sleep 1
-      #until IO.popen("netstat -lnt").entries.select { |entry|
-      #    entry.split[3] =~ /:#{node['jenkins']['server']['port']}$/
-      #  }.size == 1
-      #  Chef::Log.debug "service[jenkins] not listening on port #{node.jenkins.server.port}"
-      #  sleep 1
-      #end
-
       loop do
         url = URI.parse("#{::Chef::Jenkins.jenkins_server_url(node)}/job/test/config.xml")
         res = Chef::REST::RESTRequest.new(:GET, url, nil).call
