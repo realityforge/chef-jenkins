@@ -117,6 +117,9 @@ args << "--httpsPort=-1"
 args << "--httpPort=#{node['jenkins']['server']['port']}"
 args << "--httpListenAddress=#{node['jenkins']['server']['host']}"
 args << "--webroot=#{node['jenkins']['work_dir']}"
+# --javahome=$JAVA_HOME
+# --argumentsRealm.passwd.$ADMIN_USER=[password]
+# --argumentsRealm.$ADMIN_USER=admin
 
 template "/etc/init/jenkins.conf" do
   source "upstart.conf.erb"
