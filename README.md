@@ -44,10 +44,6 @@ Attributes
 * jenkins[:server][:port] - TCP listen port for the Jenkins server
 * jenkins[:server][:url] - Base URL of the Jenkins server
 * jenkins[:server][:plugins] - Download the latest version of plugins in this list, bypassing update center
-* jenkins[:http_proxy][:www_redirect] - add a redirect rule for 'www.*' URL requests ("disable" by default)
-* jenkins[:http_proxy][:listen_ports] - list of HTTP ports for the HTTP proxy to listen on ([80] by default)
-* jenkins[:http_proxy][:host_name] - primary vhost name for the HTTP proxy to respond to (`node[:fqdn]` by default)
-* jenkins[:http_proxy][:host_aliases] - optional list of other host aliases to respond to (empty by default)
 
 Usage
 =====
