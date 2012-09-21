@@ -5,5 +5,5 @@ description      "Installs and configures Jenkins CI server"
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 version          "0.6.5"
 
-%w(java).each { |cb| depends cb }
+ depends 'java'
 %w(runit yum apt).each { |cb| recommends cb }
