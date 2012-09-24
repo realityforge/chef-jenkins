@@ -138,3 +138,8 @@ if node['jenkins']['update_center_url']
     code "(curl --silent -L #{node['jenkins']['update_center_url']} | sed '1d;$d' | curl -X POST -H 'Accept: application/json' -d @- #{::Chef::Jenkins.jenkins_server_url(node)}/updateCenter/byId/default/postBack > /dev/null)"
   end
 end
+
+# Gem required for new jenkins xml config
+chef_gem "builder" do
+  version "3.1.3"
+end
