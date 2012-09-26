@@ -196,8 +196,8 @@ class Chef
                 xml.tag!(EMAIL_TRIGGER_CLASSES[trigger_key]) do
                   xml.email do
                     xml.recipientList('')
-                    xml.subject('$PROJECT_DEFAULT_SUBJECT')
-                    xml.body('$PROJECT_DEFAULT_CONTENT')
+                    xml.subject('${PROJECT_DEFAULT_SUBJECT}')
+                    xml.body('${PROJECT_DEFAULT_CONTENT}')
                     xml.sendToDevelopers(false)
                     xml.sendToRequester(false)
                     xml.includeCulprits(false)
@@ -207,8 +207,8 @@ class Chef
               end
             end
             xml.contentType('default')
-            xml.defaultSubject('$DEFAULT_SUBJECT')
-            xml.defaultContent('$DEFAULT_CONTENT')
+            xml.defaultSubject('${DEFAULT_SUBJECT}')
+            xml.defaultContent('${DEFAULT_CONTENT}')
             xml.attachmentsPattern('')
             xml.presendScript('')
           end
