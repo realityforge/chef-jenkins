@@ -168,11 +168,12 @@ class Chef
       self
     end
 
-    def artifact_publisher(artifacts_pattern)
+    def artifact_publisher(artifacts_pattern, options = {})
       add_publisher_section do |xml|
         xml.tag!('hudson.tasks.ArtifactArchiver') do
           xml.artifacts(artifacts_pattern)
-          xml.latestOnly(false)
+          latest_only = options[:latest_only].nil? ? false : !!options[:latest_only]
+          xml.latestOnly(latest_only)
         end
       end
     end
