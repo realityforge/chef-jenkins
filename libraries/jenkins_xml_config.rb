@@ -443,8 +443,8 @@ class Chef
           xml.shouldDetectModules(false)
           xml.dontComputeNew(false)
           xml.pattern(report_file_pattern)
-          xml.highThreshold(options['highThreshold'].to_s)
-          xml.normalThreshold(options['normalThreshold'].to_s)
+          xml.highThreshold((options['highThreshold']||50).to_s)
+          xml.normalThreshold((options['normalThreshold']||25).to_s)
         end
       end
     end
