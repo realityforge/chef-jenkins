@@ -180,7 +180,7 @@ class Chef
       add_publisher_section do |xml|
         xml.tag!('hudson.tasks.ArtifactArchiver') do
           xml.artifacts(artifacts_pattern)
-          latest_only = options[:latest_only].nil? ? false : !!options[:latest_only]
+          latest_only = options[:latest_only].nil? ? true : !!options[:latest_only]
           xml.latestOnly(latest_only)
         end
       end
