@@ -159,6 +159,14 @@ class Chef
       end
     end
 
+    def timer_trigger(spec)
+      add_trigger_section do |xml|
+        xml.tag!('hudson.triggers.TimerTrigger') do
+          xml.spec(spec)
+        end
+      end
+    end
+
     def publishers
       @publishers ||= []
     end
