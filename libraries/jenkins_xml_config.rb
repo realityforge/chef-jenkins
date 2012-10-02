@@ -186,6 +186,87 @@ class Chef
       end
     end
 
+    def testng_results_publisher(reports_filename_pattern, options = {})
+      add_publisher_section do |xml|
+        xml.tag!('hudson.plugins.testng.Publisher') do
+          xml.reportFilenamePattern(reports_filename_pattern)
+          xml.isRelativePath(false)
+          xml.escapeTestDescp(true)
+          xml.escapeExceptionMsg(true)
+        end
+      end
+    end
+
+    def javadoc_publisher(javadoc_dir, options = {})
+      add_publisher_section do |xml|
+        xml.tag!('hudson.tasks.JavadocArchiver') do
+          xml.javadocDir(javadoc_dir)
+          keep_all = options[:keep_all].nil? ? false : !!options[:keep_all]
+          xml.keepAll(keep_all)
+        end
+      end
+    end
+
+    def cobertura_publisher(report_file, options = {:healthy => {:conditions => 80, :lines => 80, :methods => 70}})
+      add_publisher_section do |xml|
+        xml.tag!('hudson.plugins.cobertura.CoberturaPublisher', :plugin => "cobertura@1.6") do
+          xml.coberturaReportFile(report_file)
+          xml.onlyStable(true)
+          xml.failUnhealthy(false)
+          xml.failUnstable(false)
+          xml.autoUpdateHealth(false)
+          xml.autoUpdateStability(false)
+          [:healthy, :unhealthy, :failing].each do |target|
+            xml.tag!("#{target}Target") do
+              xml.targets( :class => "enum-map", "enum-type" => "hudson.plugins.cobertura.targets.CoverageMetric") do
+                xml.entry do
+                  {:packages => 'PACKAGES', :classes => 'CLASSES', :files => 'FILES',
+                   :conditions => 'CONDITIONAL', :lines => 'LINE', :methods => 'METHOD'}.each_pair do |key, value|
+                    target_value = (options[target] || {})[key] || 0
+                    xml.tag!("hudson.plugins.cobertura.targets.CoverageMetric", value)
+                    xml.int(target_value)
+                  end
+                end
+              end
+            end
+          end
+        end
+      end
+    end
+
+    def jacoco_publisher(options)
+      add_publisher_section do |xml|
+        xml.tag!('hudson.plugins.jacoco.JacocoPublisher', :plugin => "jacoco@1.0.5") do
+          xml.configRows do
+            modules = options[:modules] || {}
+            modules.each_pair do |name, config|
+              xml.tag!('hudson.plugins.jacoco.ConfigRow') do
+                xml.moduleName(name.to_s)
+                xml.srcDir(config[:srcDir])
+                xml.classDir(config[:classDir])
+                xml.execFile(config[:execFile])
+              end
+            end
+          end
+          xml.healthReports do
+            reports = options[:reports] || {}
+            xml.minClass(reports[:minClass] || 0)
+            xml.maxClass(reports[:maxClass] || 0)
+            xml.minMethod(reports[:minMethod] || 0)
+            xml.maxMethod(reports[:maxMethod] || 0)
+            xml.minLine(reports[:minLine] || 0)
+            xml.maxLine(reports[:maxLine] || 0)
+            xml.minBranch(reports[:minBranch] || 0)
+            xml.maxBranch(reports[:maxBranch] || 0)
+            xml.minInstruction(reports[:minInstruction] || 0)
+            xml.maxInstruction(reports[:maxInstruction] || 0)
+            xml.minComplexity(reports[:minComplexity] || 0)
+            xml.maxComplexity(reports[:maxComplexity] || 0)
+          end
+        end
+      end
+    end
+
     EMAIL_TRIGGER_CLASSES = {
       :unstable => 'hudson.plugins.emailext.plugins.trigger.UnstableTrigger',
       :failure => 'hudson.plugins.emailext.plugins.trigger.FailureTrigger',
