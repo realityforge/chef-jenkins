@@ -214,12 +214,12 @@ class Chef
                 end
               end
             end
-            xml.contentType('default')
-            xml.defaultSubject('${DEFAULT_SUBJECT}')
-            xml.defaultContent('${DEFAULT_CONTENT}')
-            xml.attachmentsPattern('')
-            xml.presendScript('')
           end
+          xml.contentType('default')
+          xml.defaultSubject('${DEFAULT_SUBJECT}')
+          xml.defaultContent('${DEFAULT_CONTENT}')
+          xml.attachmentsPattern('')
+          xml.presendScript('')
         end
       end
     end
