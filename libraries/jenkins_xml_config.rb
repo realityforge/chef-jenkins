@@ -449,23 +449,6 @@ class Chef
       end
     end
 
-=begin
-      <thresholds>
-        <unstableTotalHigh>20</unstableTotalHigh>
-        <unstableTotalNormal>28</unstableTotalNormal>
-        <unstableNewHigh>10</unstableNewHigh>
-        <unstableNewNormal>14</unstableNewNormal>
-        <failedTotalHigh>24</failedTotalHigh>
-        <failedTotalNormal>32</failedTotalNormal>
-        <failedNewHigh>12</failedNewHigh>
-        <failedNewNormal>16</failedNewNormal>
-      </thresholds>
-      <pattern>reports/pmd/cpd.xml</pattern>
-      <highThreshold>50</highThreshold>
-      <normalThreshold>25</normalThreshold>
-
-=end
-
     def to_s
       base_document
     end
