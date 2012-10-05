@@ -142,6 +142,18 @@ class Chef
       end
     end
 
+    def critical_block_start_builder()
+      add_builder_section do |xml|
+        xml.tag!('org.jvnet.hudson.plugins.exclusion.CriticalBlockStart', :plugin => "Exclusion@0.7")
+      end
+    end
+
+    def critical_block_end_builder()
+      add_builder_section do |xml|
+        xml.tag!('org.jvnet.hudson.plugins.exclusion.CriticalBlockEnd', :plugin => "Exclusion@0.7")
+      end
+    end
+
     def triggers
       @triggers ||= []
     end
@@ -538,6 +550,21 @@ class Chef
       self.build_wrappers << block
       self
     end
+
+    def exclusion_build_wrapper(names)
+      add_build_wrapper_section do |xml|
+        xml.tag!('org.jvnet.hudson.plugins.exclusion.IdAllocator', :plugin => "Exclusion@0.7") do
+          xml.ids do
+            names.each do |name|
+              xml.tag!('org.jvnet.hudson.plugins.exclusion.DefaultIdType') do
+                xml.name(name)
+              end
+            end
+          end
+        end
+      end
+    end
+
     def to_s
       base_document
     end
