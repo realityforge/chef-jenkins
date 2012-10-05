@@ -530,6 +530,14 @@ class Chef
       end
     end
 
+    def build_wrappers
+      @build_wrappers ||= []
+    end
+
+    def add_build_wrapper_section(&block)
+      self.build_wrappers << block
+      self
+    end
     def to_s
       base_document
     end
@@ -577,7 +585,11 @@ class Chef
             publisher_section.call(xml)
           end
         end
-        xml.buildWrappers
+        xml.buildWrappers do
+          self.build_wrappers.each do |build_wrapper|
+            build_wrapper.call(xml)
+          end
+        end
       end
       target.string
     end
