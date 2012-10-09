@@ -188,6 +188,24 @@ class Chef
       self
     end
 
+    def join_trigger_publisher(join_projects, options = {})
+      add_publisher_section do |xml|
+        xml.tag!('join.JoinTrigger') do
+          downstream_projects = options[:downstream_projects] || []
+          xml.joinProjects(downstream_projects.join(','))
+          evenIfDownstreamUnstable = options[:evenIfDownstreamUnstable]
+          xml.evenIfDownstreamUnstable(evenIfDownstreamUnstable.nil? ? false : evenIfDownstreamUnstable)
+
+          xml.joinPublishers do
+            downstream_parameterized_projects = options[:downstream_parameterized_projects] || []
+            downstream_parameterized_projects.each do |p|
+              _parameterized_build_trigger(xml, p[:projects], p[:options])
+            end
+          end
+        end
+      end
+    end
+
     def artifact_publisher(artifacts_pattern, options = {})
       add_publisher_section do |xml|
         xml.tag!('hudson.tasks.ArtifactArchiver') do
@@ -332,36 +350,40 @@ class Chef
 
     def downstream_parameterized_build_trigger(projects, options = {})
       add_publisher_section do |xml|
-        xml.tag!('hudson.plugins.parameterizedtrigger.BuildTrigger') do
-          xml.configs do
-            xml.tag!('hudson.plugins.parameterizedtrigger.BuildTriggerConfig') do
-              parameters = options['parameters'] || {}
-              unless parameters.empty?
-                xml.configs do
-                  if parameters['propertiesFile']
-                    files = parameters['propertiesFile']
-                    files = files.is_a?(Array) ? files : [files]
-                    files.each do |f|
-                      xml.tag!('hudson.plugins.parameterizedtrigger.FileBuildParameters') do
-                        xml.propertiesFile(f)
-                      end
+        _parameterized_build_trigger(xml, projects, options)
+      end
+    end
+
+    def _parameterized_build_trigger(xml, projects, options)
+      xml.tag!('hudson.plugins.parameterizedtrigger.BuildTrigger') do
+        xml.configs do
+          xml.tag!('hudson.plugins.parameterizedtrigger.BuildTriggerConfig') do
+            parameters = options['parameters'] || {}
+            unless parameters.empty?
+              xml.configs do
+                if parameters['propertiesFile']
+                  files = parameters['propertiesFile']
+                  files = files.is_a?(Array) ? files : [files]
+                  files.each do |f|
+                    xml.tag!('hudson.plugins.parameterizedtrigger.FileBuildParameters') do
+                      xml.propertiesFile(f)
                     end
                   end
-                  if parameters['inline']
-                    inline = parameters['inline']
-                    inline = inline.is_a?(Array) ? inline : [inline]
-                    inline.each do |v|
-                      xml.tag!('hudson.plugins.parameterizedtrigger.PredefinedBuildParameters') do
-                        xml.properties(v)
-                      end
+                end
+                if parameters['inline']
+                  inline = parameters['inline']
+                  inline = inline.is_a?(Array) ? inline : [inline]
+                  inline.each do |v|
+                    xml.tag!('hudson.plugins.parameterizedtrigger.PredefinedBuildParameters') do
+                      xml.properties(v)
                     end
                   end
                 end
               end
-              xml.projects(projects.join(','))
-              xml.condition(options['condition'] || 'SUCCESS')
-              xml.triggerWithNoParameters(!parameters.empty?)
             end
+            xml.projects(projects.join(','))
+            xml.condition(options['condition'] || 'SUCCESS')
+            xml.triggerWithNoParameters(!parameters.empty?)
           end
         end
       end
