@@ -17,6 +17,64 @@
 class Chef
   class JenkinsConfigXML
 
+    def roam=(roam)
+      @roam = roam
+      self
+    end
+
+    def roam?
+      !!@roam
+    end
+
+    def add_build_flow(build_flow)
+      @build_flow = build_flow
+      self
+    end
+
+    def build_flow
+      @build_flow
+    end
+
+    def build_flow?
+      !!@build_flow
+    end
+
+    def disabled=(disabled)
+      @disabled = disabled
+      self
+    end
+
+    def disabled?
+      !!@disabled
+    end
+
+    def blockBuildWhenDownstreamBuilding=(blockBuildWhenDownstreamBuilding)
+      @blockBuildWhenDownstreamBuilding = blockBuildWhenDownstreamBuilding
+      self
+    end
+
+    def blockBuildWhenDownstreamBuilding?
+      !!@blockBuildWhenDownstreamBuilding
+    end
+
+    def blockBuildWhenUpstreamBuilding=(blockBuildWhenUpstreamBuilding)
+      @blockBuildWhenUpstreamBuilding = blockBuildWhenUpstreamBuilding
+      self
+    end
+
+    def blockBuildWhenUpstreamBuilding?
+      !!@blockBuildWhenUpstreamBuilding
+    end
+
+    def concurrentBuild=(concurrentBuild)
+      @concurrentBuild = concurrentBuild
+      self
+    end
+
+    def concurrentBuild?
+      !!@concurrentBuild
+    end
+
     def scm_config
       @scm_config
     end
@@ -154,6 +212,39 @@ class Chef
       end
     end
 
+    def parameterized_job_builder(projects, options = {})
+      add_builder_section do |xml|
+        xml.tag!('hudson.plugins.parameterizedtrigger.TriggerBuilder', :plugin => "parameterized-trigger@2.16") do
+          xml.configs do
+            xml.tag!('hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig') do
+              _parameterized_values(xml, options['parameters'] || {})
+
+              xml.projects(projects.join(','))
+              xml.condition('ALWAYS')
+              xml.block do
+                xml.buildStepFailureThreshold do
+                  xml.name('FAILURE')
+                  xml.ordinal(2)
+                  xml.color('RED')
+                end
+                xml.unstableThreshold do
+                  xml.name('UNSTABLE')
+                  xml.ordinal(1)
+                  xml.color('YELLOW')
+                end
+                xml.failureThreshold do
+                  xml.name('FAILURE')
+                  xml.ordinal(2)
+                  xml.color('RED')
+                end
+              end
+              xml.buildAllNodesWithLabel(false)
+            end
+          end
+        end
+      end
+    end
+
     def triggers
       @triggers ||= []
     end
@@ -248,7 +339,7 @@ class Chef
           xml.autoUpdateStability(false)
           [:healthy, :unhealthy, :failing].each do |target|
             xml.tag!("#{target}Target") do
-              xml.targets( :class => "enum-map", "enum-type" => "hudson.plugins.cobertura.targets.CoverageMetric") do
+              xml.targets(:class => "enum-map", "enum-type" => "hudson.plugins.cobertura.targets.CoverageMetric") do
                 xml.entry do
                   {:packages => 'PACKAGES', :classes => 'CLASSES', :files => 'FILES',
                    :conditions => 'CONDITIONAL', :lines => 'LINE', :methods => 'METHOD'}.each_pair do |key, value|
@@ -358,32 +449,35 @@ class Chef
       xml.tag!('hudson.plugins.parameterizedtrigger.BuildTrigger') do
         xml.configs do
           xml.tag!('hudson.plugins.parameterizedtrigger.BuildTriggerConfig') do
-            parameters = options['parameters'] || {}
-            unless parameters.empty?
-              xml.configs do
-                if parameters['propertiesFile']
-                  files = parameters['propertiesFile']
-                  files = files.is_a?(Array) ? files : [files]
-                  files.each do |f|
-                    xml.tag!('hudson.plugins.parameterizedtrigger.FileBuildParameters') do
-                      xml.propertiesFile(f)
-                    end
-                  end
-                end
-                if parameters['inline']
-                  inline = parameters['inline']
-                  inline = inline.is_a?(Array) ? inline : [inline]
-                  inline.each do |v|
-                    xml.tag!('hudson.plugins.parameterizedtrigger.PredefinedBuildParameters') do
-                      xml.properties(v)
-                    end
-                  end
-                end
-              end
-            end
+            _parameterized_values(xml, options['parameters'] || {})
             xml.projects(projects.join(','))
             xml.condition(options['condition'] || 'SUCCESS')
-            xml.triggerWithNoParameters(!parameters.empty?)
+          end
+        end
+      end
+    end
+
+    def _parameterized_values(xml, parameters)
+      xml.triggerWithNoParameters(!parameters.empty?)
+      unless parameters.empty?
+        xml.configs do
+          if parameters['propertiesFile']
+            files = parameters['propertiesFile']
+            files = files.is_a?(Array) ? files : [files]
+            files.each do |f|
+              xml.tag!('hudson.plugins.parameterizedtrigger.FileBuildParameters') do
+                xml.propertiesFile(f)
+              end
+            end
+          end
+          if parameters['inline']
+            inline = parameters['inline']
+            inline = inline.is_a?(Array) ? inline : [inline]
+            inline.each do |v|
+              xml.tag!('hudson.plugins.parameterizedtrigger.PredefinedBuildParameters') do
+                xml.properties(v)
+              end
+            end
           end
         end
       end
@@ -598,27 +692,40 @@ class Chef
 
       target = StringIO.new
       xml = ::Builder::XmlMarkup.new(:target => target, :indent => 2)
-      xml.project do
+
+      project_tag_name = 'project'
+      project_tag_attr = {}
+      if build_flow?
+        project_tag_name = 'com.cloudbees.plugins.flow.BuildFlow'
+        project_tag_attr = {:plugin => "build-flow-plugin@0.5"}
+      end
+
+      xml.tag!(project_tag_name, project_tag_attr) do
         xml.actions
         xml.description('')
-        xml.logRotator do
-          xml.daysToKeep(-1)
-          xml.numToKeep(15)
-          xml.artifactDaysToKeep(-1)
-          xml.artifactNumToKeep(-1)
-        end
-        self.scm_config.call(xml)
-        xml.keepDependencies(false)
-        xml.properties do
-          self.properties.each do |property_section|
-            property_section.call(xml)
+        if build_flow?
+          xml.icon('')
+          xml.dsl(self.build_flow)
+        else
+          xml.logRotator do
+            xml.daysToKeep(-1)
+            xml.numToKeep(15)
+            xml.artifactDaysToKeep(-1)
+            xml.artifactNumToKeep(-1)
+          end
+          self.scm_config.call(xml) if self.scm_config
+          xml.properties do
+            self.properties.each do |property_section|
+              property_section.call(xml)
+            end
           end
         end
-        xml.canRoam(true)
-        xml.disabled(false)
-        xml.blockBuildWhenDownstreamBuilding(false)
-        xml.blockBuildWhenUpstreamBuilding(false)
-        xml.concurrentBuild(false)
+        xml.keepDependencies(false)
+        xml.canRoam(self.roam?)
+        xml.disabled(self.disabled?)
+        xml.blockBuildWhenDownstreamBuilding(self.blockBuildWhenDownstreamBuilding?)
+        xml.blockBuildWhenUpstreamBuilding(self.blockBuildWhenUpstreamBuilding?)
+        xml.concurrentBuild(self.concurrentBuild?)
         xml.triggers(:class => "vector") do
           self.triggers.each do |trigger_section|
             trigger_section.call(xml)
