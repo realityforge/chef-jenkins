@@ -12,7 +12,7 @@
 # limitations under the License.
 #
 
-include_recipe "java"
+include_recipe 'java'
 
 group node['jenkins']['group'] do
 end
@@ -25,14 +25,14 @@ user node['jenkins']['user'] do
 end
 
 directory node['jenkins']['base_dir'] do
-  mode 0700
+  mode '0700'
   owner node['jenkins']['user']
   group node['jenkins']['group']
   recursive true
 end
 
 directory "#{node['jenkins']['base_dir']}/.ssh" do
-  mode 0700
+  mode '0700'
   owner node['jenkins']['user']
   group node['jenkins']['group']
 end
@@ -51,14 +51,14 @@ ruby_block "store jenkins ssh pubkey" do
 end
 
 directory node['jenkins']['server_dir'] do
-  mode "0700"
+  mode '0700'
   owner node['jenkins']['user']
   group node['jenkins']['group']
   recursive true
 end
 
 directory node['jenkins']['work_dir'] do
-  mode "0700"
+  mode '0700'
   owner node['jenkins']['user']
   group node['jenkins']['group']
   recursive true
@@ -69,7 +69,7 @@ unless node['jenkins']['version']
     node.override['jenkins']['version'] =
       `curl  -I "#{node['jenkins']['mirror']}/war/latest/jenkins.war"`.scan(/Location:.*\/war\/(.*)\/jenkins.war/).flatten[0]
   rescue Exception
-    raise "Unable to determine version of jenkins to use."
+    raise 'Unable to determine version of jenkins to use.'
   end
 end
 
@@ -78,13 +78,13 @@ war_file = "#{node['jenkins']['base_dir']}/jenkins-#{node['jenkins']['version']}
 
 remote_file war_file do
   source package_url
-  mode "0600"
+  mode '0600'
   owner node['jenkins']['user']
   group node['jenkins']['group']
   action :create_if_missing
 end
 
-service "jenkins" do
+service 'jenkins' do
   provider Chef::Provider::Service::Upstart
   supports :start => true, :restart => true, :stop => true
   action :nothing
@@ -101,13 +101,13 @@ if requires_authbind
 end
 
 java_args = []
-java_args << "-Xmx256m"
+java_args << '-Xmx256m'
 # Required for authbind
-java_args << "-Djava.net.preferIPv4Stack=true" # make jenkins listen on IPv4 address
+java_args << '-Djava.net.preferIPv4Stack=true' # make jenkins listen on IPv4 address
 
 args = []
-args << "--ajp13Port=-1"
-args << "--httpsPort=-1"
+args << '--ajp13Port=-1'
+args << '--httpsPort=-1'
 args << "--httpPort=#{node['jenkins']['server']['port']}"
 args << "--httpListenAddress=#{node['jenkins']['server']['host']}"
 args << "--webroot=#{node['jenkins']['work_dir']}"
@@ -115,24 +115,24 @@ args << "--webroot=#{node['jenkins']['work_dir']}"
 # --argumentsRealm.passwd.$ADMIN_USER=[password]
 # --argumentsRealm.$ADMIN_USER=admin
 
-template "/etc/init/jenkins.conf" do
-  source "upstart.conf.erb"
-  mode "0644"
+template '/etc/init/jenkins.conf' do
+  source 'upstart.conf.erb'
+  mode '0600'
   cookbook 'jenkins'
   variables(:war_file => war_file, :java_args => java_args, :args => args, :authbind => requires_authbind, :listen_ports => [node['jenkins']['server']['port']])
   notifies :restart, resources(:service => "jenkins"), :delayed
 end
 
-service "jenkins" do
+service 'jenkins' do
   provider Chef::Provider::Service::Upstart
-  supports :start => true, :restart => true, :stop => true
+  supports :start => true, :restart => true, :stop => true, :status => true
   action [:enable, :start]
 end
 
-jenkins_ensure_enabled "initial_startup"
+jenkins_ensure_enabled 'initial_startup'
 
 if node['jenkins']['update_center_url']
-  bash "update jenkins plugin cache" do
+  bash 'update jenkins plugin cache' do
     user node['jenkins']['user']
     group node['jenkins']['group']
     code "(curl --silent -L #{node['jenkins']['update_center_url']} | sed '1d;$d' | curl -X POST -H 'Accept: application/json' -d @- #{::Chef::Jenkins.jenkins_server_url(node)}/updateCenter/byId/default/postBack > /dev/null)"
@@ -140,6 +140,6 @@ if node['jenkins']['update_center_url']
 end
 
 # Gem required for new jenkins xml config
-chef_gem "builder" do
-  version "3.1.3"
+chef_gem 'builder' do
+  version '3.1.3'
 end
