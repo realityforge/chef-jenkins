@@ -15,6 +15,7 @@ setuid <%= node['jenkins']['user'] %>
 setgid <%= node['jenkins']['group'] %>
 respawn limit 15 5
 kill signal HUP
+umask 0077
 
 pre-start script
   test -f <%= @war_file %> || { stop; exit 0; }
