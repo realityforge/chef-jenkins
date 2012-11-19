@@ -22,6 +22,7 @@ user node['jenkins']['user'] do
   gid node['jenkins']['group']
   home node['jenkins']['base_dir']
   shell '/bin/bash'
+  system true
 end
 
 directory node['jenkins']['base_dir'] do
