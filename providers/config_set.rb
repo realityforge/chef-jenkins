@@ -21,7 +21,7 @@ notifying_action :create do
     template "#{node['jenkins']['server_dir']}/#{config_file}.xml" do
       source config['source'] || "#{config_file}.xml.erb"
       cookbook config['cookbook']
-      mode "0644"
+      mode '0600'
       owner node['jenkins']['user']
       group node['jenkins']['group']
       variables config
