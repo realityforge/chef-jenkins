@@ -121,7 +121,7 @@ template '/etc/init/jenkins.conf' do
   mode '0600'
   cookbook 'jenkins'
   variables(:war_file => war_file, :java_args => java_args, :args => args, :authbind => requires_authbind, :listen_ports => [node['jenkins']['server']['port']])
-  notifies :restart, resources(:service => "jenkins"), :delayed
+  notifies :restart, 'service[jenkins]', :delayed
 end
 
 service 'jenkins' do

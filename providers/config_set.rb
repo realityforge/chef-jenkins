@@ -25,7 +25,7 @@ notifying_action :create do
       owner node['jenkins']['user']
       group node['jenkins']['group']
       variables config
-      notifies :run, resources(:jenkins_reload => "config_reload"), :delayed
+      notifies :run, 'jenkins_reload[config_reload]', :delayed
     end
   end
 end

@@ -23,7 +23,7 @@ def process_plugins(action)
   new_resource.plugins.each do |plugin|
     jenkins_plugin plugin do
       action action
-      notifies :run, resources(:jenkins_cli => "safe-restart"), :delayed
+      notifies :run, 'jenkins_cli[safe-restart]', :delayed
     end
   end
 end

@@ -1,5 +1,6 @@
 ## v0.6.10:
 
+* Prefer new notification syntax.
 * Set name in the cookbook metadata.
 
 ## v0.6.6:
