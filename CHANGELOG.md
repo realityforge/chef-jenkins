@@ -1,3 +1,5 @@
+## v0.6.10:
+
 ## v0.6.6:
 
 * Remove the loading of plugins from within the recipe.
