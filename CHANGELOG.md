@@ -1,5 +1,7 @@
 ## v0.6.10:
 
+* Set name in the cookbook metadata.
+
 ## v0.6.6:
 
 * Remove the loading of plugins from within the recipe.
