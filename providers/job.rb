@@ -14,19 +14,19 @@
 
 include Chef::JenkinsCLI
 
-def job_exists
+def job_exists?
   res = jenkins_request("job/#{new_resource.job_name}/config.xml")
   res.kind_of?(Net::HTTPSuccess)
 end
 
 notifying_action :create do
-  unless job_exists
+  unless job_exists?
     jenkins_cli "create-job #{new_resource.job_name} < #{new_resource.config}"
   end
 end
 
 notifying_action :update do
-  if job_exists
+  if job_exists?
     jenkins_cli "update-job #{new_resource.job_name} < #{new_resource.config}"
   else
     jenkins_cli "create-job #{new_resource.job_name} < #{new_resource.config}"
