@@ -1,6 +1,8 @@
 Description
 ===========
 
+[![Build Status](https://secure.travis-ci.org/realityforge/chef-jenkins.png?branch=master)](http://travis-ci.org/realityforge/chef-jenkins)
+
 Installs and configures Jenkins CI server.  Resource providers to support automation via jenkins-cli, including job create/update.
 
 Requirements
