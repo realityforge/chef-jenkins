@@ -311,7 +311,6 @@ class Chef
       add_publisher_section do |xml|
         xml.tag!('hudson.plugins.testng.Publisher') do
           xml.reportFilenamePattern(reports_filename_pattern)
-          xml.isRelativePath(false)
           xml.escapeTestDescp(true)
           xml.escapeExceptionMsg(true)
         end
