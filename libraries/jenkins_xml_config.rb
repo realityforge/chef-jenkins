@@ -696,7 +696,7 @@ class Chef
       project_tag_attr = {}
       if build_flow?
         project_tag_name = 'com.cloudbees.plugins.flow.BuildFlow'
-        project_tag_attr = {:plugin => "build-flow-plugin@0.5"}
+        project_tag_attr = {:plugin => "build-flow-plugin@0.8"}
       end
 
       xml.tag!(project_tag_name, project_tag_attr) do
