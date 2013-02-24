@@ -14,12 +14,14 @@
 
 include Chef::JenkinsCLI
 
-def update_plugin?(plugin_name, upgrade)
-  data = jenkins_json_request("pluginManager/api/json?tree=plugins[shortName,hasUpdate]")
-  return false unless data
+def update_plugin?(upgrade)
+  data = jenkins_json_request("pluginManager/api/json?tree=plugins[shortName,hasUpdate,version]")
+  return true unless data
   data.to_hash["plugins"].each do |plugin|
-    if plugin["shortName"] == plugin_name
-      Chef::Log.debug("Jenkins_plugin: #{plugin_name} - Found existing (hasUpdate=#{plugin["hasUpdate"]})")
+    if plugin["shortName"] == new_resource.name
+      Chef::Log.debug("Jenkins_plugin: #{plugin["shortName"]}:#{plugin["version"]} - Found existing (Wanted version=#{new_resource.version} hasUpdate=#{plugin["hasUpdate"]})")
+      return false if plugin["version"].to_s == new_resource.version.to_s
+      return true unless new_resource.version.nil?
       return (plugin["hasUpdate"].to_s == 'true' && upgrade)
     end
   end
@@ -31,13 +33,13 @@ def plugin_url
 end
 
 notifying_action :install do
-    only_if { update_plugin?(new_resource.name, false) }
   jenkins_cli "install-plugin #{plugin_url}" do
+    only_if { update_plugin?(false) }
   end
 end
 
 notifying_action :update do
   jenkins_cli "install-plugin #{plugin_url}" do
-    only_if { update_plugin?(new_resource.name, true) }
+    only_if { update_plugin?(true) }
   end
 end
