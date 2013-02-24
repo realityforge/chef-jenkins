@@ -33,6 +33,7 @@ def plugin_url
 end
 
 notifying_action :install do
+
   jenkins_cli "install-plugin #{plugin_url}" do
     only_if { update_plugin?(false) }
   end
