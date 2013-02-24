@@ -31,6 +31,15 @@ class Chef
       Net::HTTP.get_response(URI("#{jenkins_server_url}/#{url}"))
     end
 
+    def jenkins_post(url, content)
+      uri = URI("#{jenkins_server_url}/#{url}")
+      Net::HTTP.new(uri.hostname, uri.port).start do |http|
+        req = Net::HTTP::Post.new(uri.request_uri)
+        req.body = content
+        http.request(req)
+      end
+    end
+
     def jenkins_json_request(url)
       res = jenkins_request(url)
       res.is_a?(Net::HTTPSuccess) ? JSON.parse(res.body.to_s) : nil
