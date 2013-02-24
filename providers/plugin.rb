@@ -26,14 +26,18 @@ def update_plugin?(plugin_name, upgrade)
   true
 end
 
+def plugin_url
+  new_resource.url.nil? ? new_resource.name : new_resource.url
+end
+
 notifying_action :install do
-  jenkins_cli "install-plugin #{new_resource.name}" do
     only_if { update_plugin?(new_resource.name, false) }
+  jenkins_cli "install-plugin #{plugin_url}" do
   end
 end
 
 notifying_action :update do
-  jenkins_cli "install-plugin #{new_resource.name}" do
+  jenkins_cli "install-plugin #{plugin_url}" do
     only_if { update_plugin?(new_resource.name, true) }
   end
 end
