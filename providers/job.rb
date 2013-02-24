@@ -27,7 +27,7 @@ end
 
 notifying_action :update do
   if job_exists?
-    jenkins_cli "update-job #{new_resource.job_name} < #{new_resource.config}"
+    jenkins_post("job/#{new_resource.job_name}/config.xml", IO.read(new_resource.config) )
   else
     jenkins_cli "create-job #{new_resource.job_name} < #{new_resource.config}"
   end
