@@ -317,6 +317,15 @@ class Chef
       end
     end
 
+    def junit_result_archiver(reports_filename_pattern, options = {})
+      add_publisher_section do |xml|
+        xml.tag!('hudson.tasks.junit.JUnitResultArchiver') do
+          xml.testResults(reports_filename_pattern)
+          xml.keepLongStdio(false)
+        end
+      end
+    end
+
     def javadoc_publisher(javadoc_dir, options = {})
       add_publisher_section do |xml|
         xml.tag!('hudson.tasks.JavadocArchiver') do
