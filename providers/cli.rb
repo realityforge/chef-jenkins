@@ -18,6 +18,8 @@ notifying_action :run do
   cli_jar = "#{Chef::Config[:file_cache_path]}/jenkins-cli.jar"
   remote_file cli_jar do
     source "#{jenkins_server_url}/jnlpJars/jenkins-cli.jar"
+    user node['jenkins']['user']
+    group node['jenkins']['group']
     action :create_if_missing
   end
 
