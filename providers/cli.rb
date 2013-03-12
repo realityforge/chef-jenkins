@@ -14,7 +14,9 @@
 
 include Chef::JenkinsCLI
 
-notifying_action :run do
+use_inline_resources
+
+action :run do
   cli_jar = "#{Chef::Config[:file_cache_path]}/jenkins-cli.jar"
   remote_file cli_jar do
     source "#{jenkins_server_url}/jnlpJars/jenkins-cli.jar"

@@ -12,7 +12,9 @@
 # limitations under the License.
 #
 
-notifying_action :create do
+use_inline_resources
+
+action :create do
   jenkins_reload "config_reload" do
     action(:nothing)
   end

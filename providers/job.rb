@@ -14,18 +14,20 @@
 
 include Chef::JenkinsCLI
 
+use_inline_resources
+
 def job_exists?
   res = jenkins_request("job/#{new_resource.job_name}/config.xml")
   res.kind_of?(Net::HTTPSuccess)
 end
 
-notifying_action :create do
+action :create do
   unless job_exists?
     jenkins_cli "create-job #{new_resource.job_name} < #{new_resource.config}"
   end
 end
 
-notifying_action :update do
+action :update do
   if job_exists?
     jenkins_post("job/#{new_resource.job_name}/config.xml", IO.read(new_resource.config) )
   else
@@ -33,18 +35,18 @@ notifying_action :update do
   end
 end
 
-notifying_action :delete do
+action :delete do
   jenkins_cli "delete-job #{new_resource.job_name}"
 end
 
-notifying_action :disable do
+action :disable do
   jenkins_cli "disable-job #{new_resource.job_name}"
 end
 
-notifying_action :enable do
+action :enable do
   jenkins_cli "enable-job #{new_resource.job_name}"
 end
 
-notifying_action :build do
+action :build do
   jenkins_cli "build #{new_resource.job_name}"
 end

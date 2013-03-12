@@ -14,6 +14,8 @@
 
 include Chef::JenkinsCLI
 
+use_inline_resources
+
 def update_plugin?(upgrade)
   data = jenkins_json_request("pluginManager/api/json?tree=plugins[shortName,hasUpdate,version]")
   return true unless data
@@ -32,14 +34,14 @@ def plugin_url
   new_resource.url.nil? ? new_resource.name : new_resource.url
 end
 
-notifying_action :install do
+action :install do
 
   jenkins_cli "install-plugin #{plugin_url}" do
     only_if { update_plugin?(false) }
   end
 end
 
-notifying_action :update do
+action :update do
   jenkins_cli "install-plugin #{plugin_url}" do
     only_if { update_plugin?(true) }
   end

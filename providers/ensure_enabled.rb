@@ -14,7 +14,9 @@
 
 include Chef::JenkinsCLI
 
-notifying_action :run do
+use_inline_resources
+
+action :run do
   ruby_block "block_until_operational" do
     block do
       sleep 1

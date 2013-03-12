@@ -7,5 +7,4 @@ long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 version          '0.6.9'
 
 depends 'java'
-depends 'cutlery', '~> 0.1'
 recommends 'authbind'

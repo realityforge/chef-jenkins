@@ -14,7 +14,9 @@
 
 include Chef::JenkinsCLI
 
-notifying_action :run do
+use_inline_resources
+
+action :run do
   jenkins_ensure_enabled "pre-reload-configuration"
   jenkins_cli "reload-configuration"
   jenkins_ensure_enabled "post-reload-configuration"

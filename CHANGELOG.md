@@ -1,5 +1,6 @@
 ## v0.6.10:
 
+* Upgrade to Chef 11 and use use_inline_resources.
 * Prefer new notification syntax.
 * Set name in the cookbook metadata.
 
