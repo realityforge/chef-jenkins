@@ -666,6 +666,14 @@ class Chef
       end
     end
 
+    def ansi_color_build_wrapper(options = {})
+      add_build_wrapper_section do |xml|
+        xml.tag!('hudson.plugins.ansicolor.AnsiColorBuildWrapper', :plugin => "ansicolor@0.3.1") do
+          xml.colorMapName(options['colorMapName'] || 'xterm')
+        end
+      end
+    end
+
     def build_wrappers
       @build_wrappers ||= []
     end
