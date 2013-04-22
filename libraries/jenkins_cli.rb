@@ -20,6 +20,28 @@ class Chef
       def jenkins_server_url(node)
         "http://#{node['jenkins']['server']['host']}:#{node['jenkins']['server']['port']}"
       end
+
+      def jenkins_request(node, url)
+        uri = URI("#{jenkins_server_url(node)}/#{url}")
+        Net::HTTP.new(uri.hostname, uri.port).start do |http|
+          req = Net::HTTP::Get.new(uri.request_uri)
+          return http.request(req)
+        end
+      end
+
+      def jenkins_post(node, url, content)
+        uri = URI("#{jenkins_server_url(node)}/#{url}")
+        Net::HTTP.new(uri.hostname, uri.port).start do |http|
+          req = Net::HTTP::Post.new(uri.request_uri)
+          req.body = content
+          return http.request(req)
+        end
+      end
+
+      def jenkins_json_request(node, url)
+        res = jenkins_request(node, url)
+        res.is_a?(Net::HTTPSuccess) ? JSON.parse(res.body.to_s) : nil
+      end
     end
   end
   module JenkinsCLI
@@ -28,21 +50,15 @@ class Chef
     end
 
     def jenkins_request(url)
-      Net::HTTP.get_response(URI("#{jenkins_server_url}/#{url}"))
+      ::Chef::Jenkins.jenkins_request(node, url)
     end
 
     def jenkins_post(url, content)
-      uri = URI("#{jenkins_server_url}/#{url}")
-      Net::HTTP.new(uri.hostname, uri.port).start do |http|
-        req = Net::HTTP::Post.new(uri.request_uri)
-        req.body = content
-        http.request(req)
-      end
+      ::Chef::Jenkins.jenkins_post(node, url, content)
     end
 
     def jenkins_json_request(url)
-      res = jenkins_request(url)
-      res.is_a?(Net::HTTPSuccess) ? JSON.parse(res.body.to_s) : nil
+      ::Chef::Jenkins.jenkins_json_request(node, url)
     end
 
     def jenkins_command(command)
