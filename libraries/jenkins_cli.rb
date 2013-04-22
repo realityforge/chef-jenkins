@@ -25,6 +25,7 @@ class Chef
         uri = URI("#{jenkins_server_url(node)}/#{url}")
         Net::HTTP.new(uri.hostname, uri.port).start do |http|
           req = Net::HTTP::Get.new(uri.request_uri)
+          req.basic_auth node['jenkins']['api_user'], node['jenkins']['api_token'] if node['jenkins']['api_user']
           return http.request(req)
         end
       end
@@ -33,6 +34,7 @@ class Chef
         uri = URI("#{jenkins_server_url(node)}/#{url}")
         Net::HTTP.new(uri.hostname, uri.port).start do |http|
           req = Net::HTTP::Post.new(uri.request_uri)
+          req.basic_auth node['jenkins']['api_user'], node['jenkins']['api_token'] if node['jenkins']['api_user']
           req.body = content
           return http.request(req)
         end

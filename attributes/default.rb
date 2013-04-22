@@ -23,6 +23,8 @@ default['jenkins']['work_dir'] = '/opt/jenkins/work'
 default['jenkins']['user'] = 'jenkins'
 default['jenkins']['group'] = 'jenkins'
 default['jenkins']['private_key'] = nil
+default['jenkins']['api_user'] = nil
+default['jenkins']['api_token'] = nil
 
 default['jenkins']['server']['port'] = 8080
 default['jenkins']['server']['host'] = node['fqdn']
