@@ -12,8 +12,6 @@
 # limitations under the License.
 #
 
-include Chef::JenkinsCLI
-
 use_inline_resources
 
 action :run do
@@ -22,9 +20,8 @@ action :run do
       sleep 1
       loop do
         begin
-          url = URI.parse("#{::Chef::Jenkins.jenkins_server_url(node)}/job/test/config.xml")
-          res = Chef::REST::RESTRequest.new(:GET, url, nil).call
-          break if res.kind_of?(Net::HTTPSuccess) or res.kind_of?(Net::HTTPNotFound)
+          res = ::Chef::Jenkins.jenkins_request(node, '/job/test/config.xml')
+          break if res.kind_of?(Net::HTTPSuccess) || res.kind_of?(Net::HTTPNotFound)
           Chef::Log.debug "service[jenkins] not responding OK to GET / #{res.inspect}"
         rescue Exception => e
           Chef::Log.debug "service[jenkins] error while accessing GET /"
