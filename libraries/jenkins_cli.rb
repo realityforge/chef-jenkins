@@ -18,7 +18,7 @@ class Chef
   class Jenkins
     class << self
       def jenkins_server_url(node)
-        "http://#{node['jenkins']['server']['host']}:#{node['jenkins']['server']['port']}/"
+        "http://#{node['jenkins']['server']['host']}:#{node['jenkins']['server']['port']}"
       end
     end
   end
