@@ -17,8 +17,10 @@ use_inline_resources
 action :run do
   ruby_block "block_until_operational" do
     block do
-      sleep 1
+      count = 0
       loop do
+        raise "Jenkins failed to become operational" if count > 50
+        count = count + 1
         begin
           res = ::Chef::Jenkins.jenkins_request(node, '/job/test/config.xml')
           break if res.kind_of?(Net::HTTPSuccess) || res.kind_of?(Net::HTTPNotFound)
