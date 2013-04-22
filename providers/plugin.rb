@@ -37,12 +37,14 @@ end
 action :install do
 
   jenkins_cli "install-plugin #{plugin_url}" do
+    private_key new_resource.private_key if new_resource.private_key
     only_if { update_plugin?(false) }
   end
 end
 
 action :update do
   jenkins_cli "install-plugin #{plugin_url}" do
+    private_key new_resource.private_key if new_resource.private_key
     only_if { update_plugin?(true) }
   end
 end

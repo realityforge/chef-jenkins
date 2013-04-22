@@ -17,7 +17,13 @@ include Chef::JenkinsCLI
 use_inline_resources
 
 action :run do
-  jenkins_ensure_enabled "pre-reload-configuration"
-  jenkins_cli "reload-configuration"
-  jenkins_ensure_enabled "post-reload-configuration"
+  jenkins_ensure_enabled "pre-reload-configuration" do
+    private_key new_resource.private_key if new_resource.private_key
+  end
+  jenkins_cli "reload-configuration" do
+    private_key new_resource.private_key if new_resource.private_key
+  end
+  jenkins_ensure_enabled "post-reload-configuration" do
+    private_key new_resource.private_key if new_resource.private_key
+  end
 end

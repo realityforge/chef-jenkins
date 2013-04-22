@@ -130,7 +130,9 @@ service 'jenkins' do
   action [:enable, :start]
 end
 
-jenkins_ensure_enabled 'initial_startup'
+jenkins_ensure_enabled 'initial_startup' do
+  private_key node['jenkins']['private_key'] if node['jenkins']['private_key']
+end
 
 if node['jenkins']['update_center_url']
   bash 'update jenkins plugin cache' do

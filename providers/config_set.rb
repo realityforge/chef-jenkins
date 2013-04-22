@@ -16,6 +16,7 @@ use_inline_resources
 
 action :create do
   jenkins_reload "config_reload" do
+    private_key new_resource.private_key if new_resource.private_key
     action(:nothing)
   end
 

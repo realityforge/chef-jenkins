@@ -31,22 +31,32 @@ action :update do
   if job_exists?
     jenkins_post("job/#{new_resource.job_name}/config.xml", IO.read(new_resource.config) )
   else
-    jenkins_cli "create-job #{new_resource.job_name} < #{new_resource.config}"
+    jenkins_cli "create-job #{new_resource.job_name} < #{new_resource.config}" do
+      private_key new_resource.private_key if new_resource.private_key
+    end
   end
 end
 
 action :delete do
-  jenkins_cli "delete-job #{new_resource.job_name}"
+  jenkins_cli "delete-job #{new_resource.job_name}" do
+    private_key new_resource.private_key if new_resource.private_key
+  end
 end
 
 action :disable do
-  jenkins_cli "disable-job #{new_resource.job_name}"
+  jenkins_cli "disable-job #{new_resource.job_name}" do
+    private_key new_resource.private_key if new_resource.private_key
+  end
 end
 
 action :enable do
-  jenkins_cli "enable-job #{new_resource.job_name}"
+  jenkins_cli "enable-job #{new_resource.job_name}" do
+    private_key new_resource.private_key if new_resource.private_key
+  end
 end
 
 action :build do
-  jenkins_cli "build #{new_resource.job_name}"
+  jenkins_cli "build #{new_resource.job_name}" do
+    private_key new_resource.private_key if new_resource.private_key
+  end
 end
