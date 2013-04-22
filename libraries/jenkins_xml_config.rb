@@ -17,7 +17,7 @@
 class Chef
   class JenkinsConfigXML
 
-    def roam=(roam)
+    def roam(roam)
       @roam = roam
       self
     end
@@ -39,7 +39,7 @@ class Chef
       !!@build_flow
     end
 
-    def disabled=(disabled)
+    def disabled(disabled)
       @disabled = disabled
       self
     end
@@ -48,7 +48,7 @@ class Chef
       !!@disabled
     end
 
-    def blockBuildWhenDownstreamBuilding=(blockBuildWhenDownstreamBuilding)
+    def blockBuildWhenDownstreamBuilding(blockBuildWhenDownstreamBuilding)
       @blockBuildWhenDownstreamBuilding = blockBuildWhenDownstreamBuilding
       self
     end
@@ -57,7 +57,7 @@ class Chef
       !!@blockBuildWhenDownstreamBuilding
     end
 
-    def blockBuildWhenUpstreamBuilding=(blockBuildWhenUpstreamBuilding)
+    def blockBuildWhenUpstreamBuilding(blockBuildWhenUpstreamBuilding)
       @blockBuildWhenUpstreamBuilding = blockBuildWhenUpstreamBuilding
       self
     end
@@ -66,7 +66,7 @@ class Chef
       !!@blockBuildWhenUpstreamBuilding
     end
 
-    def concurrentBuild=(concurrentBuild)
+    def concurrentBuild(concurrentBuild)
       @concurrentBuild = concurrentBuild
       self
     end
