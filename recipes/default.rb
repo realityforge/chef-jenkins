@@ -102,7 +102,10 @@ if requires_authbind
 end
 
 java_args = []
-java_args << '-Xmx256m'
+java_args << "-Xms#{node['jenkins']['server']['min_memory']}m"
+java_args << "-Xmx#{node['jenkins']['server']['max_memory']}m"
+java_args << "-XX:MaxPermSize=#{node['jenkins']['server']['max_perm_size']}m"
+java_args << "-Xss#{node['jenkins']['server']['max_stack_size']}m"
 # Required for authbind
 java_args << '-Djava.net.preferIPv4Stack=true' # make jenkins listen on IPv4 address
 

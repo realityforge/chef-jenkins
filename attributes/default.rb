@@ -28,3 +28,8 @@ default['jenkins']['api_token'] = nil
 
 default['jenkins']['server']['port'] = 8080
 default['jenkins']['server']['host'] = node['fqdn']
+
+default['jenkins']['server']['min_memory'] = 512
+default['jenkins']['server']['max_memory'] = 512
+default['jenkins']['server']['max_perm_size'] = 128
+default['jenkins']['server']['max_stack_size'] = 256
