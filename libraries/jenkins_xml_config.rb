@@ -644,18 +644,18 @@ class Chef
             xml.unstableTotalHigh(options['unstableTotalHigh'].to_s)
             xml.unstableTotalNormal(options['unstableTotalNormal'].to_s)
             xml.unstableTotalLow(options['unstableTotalLow'].to_s)
-            xml.unstableNewAll(options['unstableNewAll'].to_s)
-            xml.unstableNewHigh(options['unstableNewHigh'].to_s)
-            xml.unstableNewNormal(options['unstableNewNormal'].to_s)
-            xml.unstableNewLow(options['unstableNewLow'].to_s)
+            xml.unstableNewAll(options['unstableNewAll'].to_s) if options['unstableNewAll']
+            xml.unstableNewHigh(options['unstableNewHigh'].to_s) if options['unstableNewHigh']
+            xml.unstableNewNormal(options['unstableNewNormal'].to_s) if options['unstableNewNormal']
+            xml.unstableNewLow(options['unstableNewLow'].to_s) if options['unstableNewLow']
             xml.failedTotalAll(options['failedTotalAll'].to_s)
             xml.failedTotalHigh(options['failedTotalHigh'].to_s)
             xml.failedTotalNormal(options['failedTotalNormal'].to_s)
             xml.failedTotalLow(options['failedTotalLow'].to_s)
-            xml.failedNewAll(options['failedNewAll'].to_s)
-            xml.failedNewHigh(options['failedNewHigh'].to_s)
-            xml.failedNewNormal(options['failedNewNormal'].to_s)
-            xml.failedNewLow(options['failedNewLow'].to_s)
+            xml.failedNewAll(options['failedNewAll'].to_s) if options['failedNewAll']
+            xml.failedNewHigh(options['failedNewHigh'].to_s) if options['failedNewHigh']
+            xml.failedNewNormal(options['failedNewNormal'].to_s) if options['failedNewNormal']
+            xml.failedNewLow(options['failedNewLow'].to_s) if options['failedNewLow']
           end
           xml.shouldDetectModules(false)
           xml.dontComputeNew(false)
