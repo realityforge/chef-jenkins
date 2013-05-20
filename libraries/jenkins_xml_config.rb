@@ -630,12 +630,12 @@ class Chef
 
     def dry_publisher(report_file_pattern, options = {})
       add_publisher_section do |xml|
-        xml.tag!('hudson.plugins.dry.DryPublisher') do
+        xml.tag!('hudson.plugins.dry.DryPublisher', :plugin => "dry@2.34") do
           xml.healthy(options['healthy'].to_s)
           xml.unHealthy(options['unHealthy'].to_s)
 
           xml.pluginName('[DRY] ')
-          xml.thresholdLimit(options['thresholdLimit'] || 'normal')
+          xml.thresholdLimit(options['thresholdLimit'] || 'high')
           xml.defaultEncoding(options['defaultEncoding'].to_s)
           xml.canRunOnFailed(false)
           xml.useDeltaValues(false)
@@ -658,7 +658,7 @@ class Chef
             xml.failedNewLow(options['failedNewLow'].to_s) if options['failedNewLow']
           end
           xml.shouldDetectModules(false)
-          xml.dontComputeNew(false)
+          xml.dontComputeNew(true)
           xml.pattern(report_file_pattern)
           xml.highThreshold((options['highThreshold']||50).to_s)
           xml.normalThreshold((options['normalThreshold']||25).to_s)
