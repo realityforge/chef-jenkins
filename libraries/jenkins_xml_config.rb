@@ -528,7 +528,7 @@ class Chef
           xml.pluginName('[CHECKSTYLE] ')
           xml.thresholdLimit(options['thresholdLimit'] || 'low')
           xml.defaultEncoding(options['defaultEncoding'].to_s)
-          xml.canRunOnFailed(false)
+          xml.canRunOnFailed(options['canRunOnFailed'] || false)
           xml.useDeltaValues(false)
           xml.thresholds do
             xml.unstableTotalAll(options['unstableTotalAll'].to_s)
@@ -564,7 +564,7 @@ class Chef
           xml.pluginName('[FINDBUGS] ')
           xml.thresholdLimit(options['thresholdLimit'] || 'low')
           xml.defaultEncoding(options['defaultEncoding'].to_s)
-          xml.canRunOnFailed(false)
+          xml.canRunOnFailed(options['canRunOnFailed'] || false)
           xml.useDeltaValues(false)
           xml.thresholds do
             xml.unstableTotalAll(options['unstableTotalAll'].to_s)
@@ -601,7 +601,7 @@ class Chef
           xml.pluginName('[PMD] ')
           xml.thresholdLimit(options['thresholdLimit'] || 'low')
           xml.defaultEncoding(options['defaultEncoding'].to_s)
-          xml.canRunOnFailed(false)
+          xml.canRunOnFailed(options['canRunOnFailed'] || false)
           xml.useDeltaValues(false)
           xml.thresholds do
             xml.unstableTotalAll(options['unstableTotalAll'].to_s)
@@ -637,7 +637,7 @@ class Chef
           xml.pluginName('[DRY] ')
           xml.thresholdLimit(options['thresholdLimit'] || 'high')
           xml.defaultEncoding(options['defaultEncoding'].to_s)
-          xml.canRunOnFailed(false)
+          xml.canRunOnFailed(options['canRunOnFailed'] || false)
           xml.useDeltaValues(false)
           xml.thresholds do
             xml.unstableTotalAll(options['unstableTotalAll'].to_s)
