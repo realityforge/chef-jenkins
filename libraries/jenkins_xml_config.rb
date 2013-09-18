@@ -363,35 +363,30 @@ class Chef
       end
     end
 
-    def jacoco_publisher(options)
+    def jacoco_publisher(options = {})
       add_publisher_section do |xml|
-        xml.tag!('hudson.plugins.jacoco.JacocoPublisher', :plugin => "jacoco@1.0.5") do
-          xml.configRows do
-            modules = options[:modules] || {}
-            modules.each_pair do |name, config|
-              xml.tag!('hudson.plugins.jacoco.ConfigRow') do
-                xml.moduleName(name.to_s)
-                xml.srcDir(config[:srcDir])
-                xml.classDir(config[:classDir])
-                xml.execFile(config[:execFile])
-              end
-            end
-          end
-          xml.healthReports do
-            reports = options[:reports] || {}
-            xml.minClass(reports[:minClass] || 0)
-            xml.maxClass(reports[:maxClass] || 0)
-            xml.minMethod(reports[:minMethod] || 0)
-            xml.maxMethod(reports[:maxMethod] || 0)
-            xml.minLine(reports[:minLine] || 0)
-            xml.maxLine(reports[:maxLine] || 0)
-            xml.minBranch(reports[:minBranch] || 0)
-            xml.maxBranch(reports[:maxBranch] || 0)
-            xml.minInstruction(reports[:minInstruction] || 0)
-            xml.maxInstruction(reports[:maxInstruction] || 0)
-            xml.minComplexity(reports[:minComplexity] || 0)
-            xml.maxComplexity(reports[:maxComplexity] || 0)
-          end
+        xml.tag!('hudson.plugins.jacoco.JacocoPublisher', :plugin => "jacoco@1.0.13") do
+          # The JaCoCo config used to have a "HealthReports" section, now removed. I have kept the ":reports" option tho to stay backwards compatible.
+          reports = options[:reports] || {}
+          xml.execPattern(reports[:execPattern] || '**/**.exec')
+          xml.classPattern(reports[:classPattern] || '**/classes')
+          xml.sourcePattern(reports[:sourcePattern] || '**/src/main/java')
+          xml.inclusionPattern(reports[:inclusionPattern] || '')
+          xml.exclusionPattern(reports[:exclusionPattern] || '**/test/**/*.class')
+
+          xml.minimumClassCoverage(reports[:minClass] || 0)
+          xml.maximumClassCoverage(reports[:maxClass] || 0)
+          xml.minimumMethodCoverage(reports[:minMethod] || 0)
+          xml.maximumMethodCoverage(reports[:maxMethod] || 0)
+          xml.minimumLineCoverage(reports[:minLine] || 0)
+          xml.maximumLineCoverage(reports[:maxLine] || 0)
+          xml.minimumBranchCoverage(reports[:minBranch] || 0)
+          xml.maximumBranchCoverage(reports[:maxBranch] || 0)
+          xml.minimumInstructionCoverage(reports[:minInstruction] || 0)
+          xml.maximumInstructionCoverage(reports[:maxInstruction] || 0)
+          xml.minimumComplexityCoverage(reports[:minComplexity] || 0)
+          xml.maximumComplexityCoverage(reports[:maxComplexity] || 0)
+          xml.changeBuildStatus(reports[:changeBuildStatus] || false)
         end
       end
     end
