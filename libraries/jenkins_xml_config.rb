@@ -666,6 +666,19 @@ class Chef
       end
     end
 
+    def timeout_build_wrapper(options = {})
+      add_build_wrapper_section do |xml|
+        xml.tag!('hudson.plugins.build__timeout.BuildTimeoutWrapper', :plugin => "build-timeout@1.11") do
+          xml.timeoutMinutes(options['timeoutMinutes']) if options['timeoutMinutes']
+          xml.failBuild(options['failBuild'].nil? ? true : options['failBuild'])
+          xml.writingDescription(options['writingDescription'].nil? ? true : options['writingDescription'])
+          xml.timeoutPercentage(options['timeoutPercentage']) if options['timeoutPercentage']
+          xml.timeoutType(options['timeoutType'] || 'absolute') if options['timeoutType']
+          xml.timeoutMinutesElasticDefault(options['timeoutMinutesElasticDefault']) if options['timeoutMinutesElasticDefault']
+        end
+      end
+    end
+
     def ansi_color_build_wrapper(options = {})
       add_build_wrapper_section do |xml|
         xml.tag!('hudson.plugins.ansicolor.AnsiColorBuildWrapper', :plugin => "ansicolor@0.3.1") do
