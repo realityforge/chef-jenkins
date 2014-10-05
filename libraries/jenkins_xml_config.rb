@@ -307,7 +307,7 @@ class Chef
       end
     end
 
-    def testng_results_publisher(reports_filename_pattern, options = {})
+    def testng_results_publisher(reports_filename_pattern = '**/testng/testng-results.xml', options = {})
       add_publisher_section do |xml|
         xml.tag!('hudson.plugins.testng.Publisher') do
           xml.reportFilenamePattern(reports_filename_pattern)
@@ -494,7 +494,7 @@ class Chef
       end
     end
 
-    def javancss_publisher(report_file_pattern)
+    def javancss_publisher(report_file_pattern = '**/javancss.xml')
       add_publisher_section do |xml|
         xml.tag!('hudson.plugins.javancss.JavaNCSSPublisher') do
           xml.reportFilenamePattern(report_file_pattern)
@@ -514,7 +514,7 @@ class Chef
       end
     end
 
-    def checkstyle_publisher(report_file_pattern, options = {})
+    def checkstyle_publisher(report_file_pattern = '**/*/checkstyle.xml', params = {})
       add_publisher_section do |xml|
         xml.tag!('hudson.plugins.checkstyle.CheckStylePublisher') do
           xml.healthy(options['healthy'].to_s)
@@ -550,7 +550,7 @@ class Chef
       end
     end
 
-    def findbugs_publisher(report_file_pattern, options = {})
+    def findbugs_publisher(report_file_pattern = '**/findbugs.xml', params = {})
       add_publisher_section do |xml|
         xml.tag!('hudson.plugins.findbugs.FindBugsPublisher') do
           xml.healthy(options['healthy'].to_s)
@@ -587,7 +587,7 @@ class Chef
       end
     end
 
-    def pmd_publisher(report_file_pattern, options = {})
+    def pmd_publisher(report_file_pattern = '**/pmd.xml', params = {})
       add_publisher_section do |xml|
         xml.tag!('hudson.plugins.pmd.PmdPublisher') do
           xml.healthy(options['healthy'].to_s)
