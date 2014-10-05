@@ -515,6 +515,7 @@ class Chef
     end
 
     def checkstyle_publisher(report_file_pattern = '**/*/checkstyle.xml', params = {})
+      options = {'unstableTotalAll' => 1, 'unstableNewAll' => 5, 'failedTotalAll' => 5, 'failedNewAll' => 5}.merge(params)
       add_publisher_section do |xml|
         xml.tag!('hudson.plugins.checkstyle.CheckStylePublisher') do
           xml.healthy(options['healthy'].to_s)
@@ -551,6 +552,7 @@ class Chef
     end
 
     def findbugs_publisher(report_file_pattern = '**/findbugs.xml', params = {})
+      options = {'unstableTotalAll' => 1, 'failedTotalAll' => 1}.merge(params)
       add_publisher_section do |xml|
         xml.tag!('hudson.plugins.findbugs.FindBugsPublisher') do
           xml.healthy(options['healthy'].to_s)
@@ -588,6 +590,7 @@ class Chef
     end
 
     def pmd_publisher(report_file_pattern = '**/pmd.xml', params = {})
+      options = {'failedTotalAll' => 1, 'unstableTotalAll' => 1}.merge(params)
       add_publisher_section do |xml|
         xml.tag!('hudson.plugins.pmd.PmdPublisher') do
           xml.healthy(options['healthy'].to_s)
