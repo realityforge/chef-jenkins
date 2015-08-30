@@ -93,6 +93,7 @@ class Chef
               xml.name('origin')
               xml.refspec('+refs/heads/*:refs/remotes/origin/*')
               xml.url(git_url)
+              xml.credentialsId(options['credentials_id']) if options['credentials_id']
             end
           end
           xml.branches do
