@@ -91,7 +91,7 @@ class Chef
           xml.userRemoteConfigs do
             xml.tag!('hudson.plugins.git.UserRemoteConfig') do
               xml.name('origin')
-              xml.refspec('+refs/heads/*:refs/remotes/origin/*')
+              xml.refspec(options[:refspec] || '+refs/heads/*:refs/remotes/origin/*')
               xml.url(git_url)
               xml.credentialsId(options['credentials_id']) if options['credentials_id']
             end
@@ -267,6 +267,32 @@ class Chef
       add_trigger_section do |xml|
         xml.tag!('hudson.triggers.TimerTrigger') do
           xml.spec(spec)
+        end
+      end
+    end
+
+    def pull_request_trigger(pull_request_job_name)
+      add_trigger_section do |xml|
+        xml.tag!('com.cloudbees.jenkins.GitHubPushTrigger', :plugin => "github@1.13.0") do
+          xml.spec
+        end
+        xml.tag!('org.jenkinsci.plugins.ghprb.GhprbTrigger', :plugin => "ghprb@1.27") do
+          xml.spec('H/5 * * * *')
+          xml.triggerPhrase
+          xml.configVersion(1)
+          xml.adminList
+          xml.allowMembersOfWhitelistedOrgsAsAdmin(false)
+          xml.orgList
+          xml.cron('H/5 * * * *')
+          xml.buildDescTemplate
+          xml.onlyTriggerPhrase(false)
+          xml.useGitHubHooks(true)
+          xml.permitAll(true)
+          xml.whitelist
+          xml.autoCloseFailedPullRequests(false)
+          xml.displayBuildErrorsOnDownstreamBuilds(false)
+          xml.whiteListTargetBranches
+          xml.project(pull_request_job_name)
         end
       end
     end
