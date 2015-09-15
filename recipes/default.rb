@@ -108,6 +108,8 @@ java_args << "-XX:MaxPermSize=#{node['jenkins']['server']['max_perm_size']}m"
 java_args << "-Xss#{node['jenkins']['server']['max_stack_size']}m"
 # Required for authbind
 java_args << '-Djava.net.preferIPv4Stack=true' # make jenkins listen on IPv4 address
+# Required for buildbot to use jenkins_cli with a private key
+java_args << '-Dhudson.model.User.allowNonExistentUserToLogin=true'
 
 args = []
 args << '--ajp13Port=-1'
