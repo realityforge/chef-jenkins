@@ -26,7 +26,7 @@ action :run do
           break if res.kind_of?(Net::HTTPSuccess) || res.kind_of?(Net::HTTPNotFound)
           Chef::Log.debug "service[jenkins] not responding OK to GET / #{res.inspect}"
         rescue Exception => e
-          Chef::Log.debug "service[jenkins] error while accessing GET /"
+          Chef::Log.debug "service[jenkins] error while accessing version when checking service operational: #{e}"
         end
         sleep 1
       end
